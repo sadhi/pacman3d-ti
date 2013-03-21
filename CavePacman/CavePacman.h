@@ -11,7 +11,12 @@
 #include <cavelib/texture.h>
 #include <vector>
 #include "block.h"
+#include "Orb.h"
+#include "SuperOrb.h"
+#include "DefaultOrb.h"
 #include "Coordinate.h"
+#include "Pacman.h"
+#include "Ghost.h"
 
 class CavePacman :
 	public vrj::opengl::App
@@ -24,14 +29,15 @@ public:
 	void contextInit();
 	gmtl::Vec4f collisionLinePlane(gmtl::Vec3f A, gmtl::Vec3f B, gmtl::Planef plane);
 	void preFrame();
-	void updateTargets();
 	void bufferPreDraw();
 	void draw();
 	void draw3DRectangle(const float x1, const float y1, const float z1, const float w1, const float h1, const float d1);
 	void drawTextured3DRectangle(const float x1, const float y1, const float z1, const float w1, const float h1, const float d1);
 	void draw3DRectangleWithoutTop(const float x1, const float y1, const float z1, const float w1, const float h1, const float d1);
+	void drawSphere(double r, int lats, int longs) ;
 
 	void addBlock(int x, int z);
+	void addOrb(int x, int z);
 	void loadLevel();
 	void checkInput();
 	void checkCollision();
@@ -57,6 +63,11 @@ private:
 	Block* objects[24][24];
 	std::vector<Coordinate*> coordinates;
 
-	float translateX, translateZ;
+	bool orbGrid[24][24];
+	Orb* orbs[24][24];
+	std::vector<Coordinate*> orbCoordinates;
+
+	Pacman* pacman;
+	std::vector<Ghost*> ghosts;
 };
 

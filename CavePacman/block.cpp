@@ -30,11 +30,12 @@ Block::Block(float x, float z)
 	this->blue = 1.0f;
 }
 
-BOOL Block:: contains(float x2, float y2, float z2)
+bool Block:: contains(float x2, float y2, float z2)
 {
-	//std::cout << x2 << ", " << y2 << ", " << z2 << std::endl;
-	if(x2 >= x && x2 <= x+w && y2 >= y && y2 <= y+h && z2 >= z && z2 <= z+d)
+	std::cout << x2 << ", " << y2 << ", " << z2 << std::endl;
+	if(x2 > x && x2 < x+w && y2 > y && y2 < y+h && z2 > z && z2 < z+d)
 	{
+		std::cout << "HIT" << std::endl;
 		return true;
 	}
 	else
