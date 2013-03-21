@@ -27,7 +27,7 @@ class Block
 	float Block:: getW()const{return w;}
 	float Block:: getH()const{return h;}
 	float Block:: getD()const{return d;}
-	BOOL Block:: contains(float x2, float y2, float z2);
+	bool Block:: contains(float x2, float y2, float z2);
 	void Block:: setColor(float red, float green, float blue);
 	void Block:: update();
 	void Block:: draw();

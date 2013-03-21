@@ -20,8 +20,18 @@ void CavePacman::init()
 	texture = CaveLib::loadTexture("Images/grid.jpg", t);
 
 	direction = 0;
-	translateX = 130.0f;
-	translateZ = 130.0f;
+	pacman = new Pacman(130.0f, 130.0f);
+	for(int x = 0; x < 24; x++)
+	{
+		for(int y = 0; y < 24; y++)
+		{
+			grid[x][y] = false;
+		}
+	}
+	for(int i = 0; i < 5; i++)
+	{
+		ghosts.push_back(new Ghost(rand()%20, rand()%20));
+	}
 
 	//for(int z = 0; z < 10; z++)
 	//{
@@ -97,6 +107,9 @@ void CavePacman::loadLevel()
 		std::cout << "Block: " << x << ", " << z << std::endl;
 	}
 	std::cout << "Finished" << std::endl;
+
+	//Test
+	addOrb(0, 0);
 }
 
 void CavePacman::addBlock(int x, int z)
@@ -104,6 +117,13 @@ void CavePacman::addBlock(int x, int z)
 	grid[x][z] = true;
 	objects[x][z] = new Block(x, z);
 	coordinates.push_back(new Coordinate(x, z));
+}
+
+void CavePacman::addOrb(int x, int z)
+{
+	orbGrid[x][z] = true;
+	orbs[x][z] = new DefaultOrb(x, z);
+	orbCoordinates.push_back(new Coordinate(x, z));
 }
 
 void CavePacman::contextInit()
@@ -132,7 +152,11 @@ void CavePacman::preFrame()
 {
 	checkInput();
 	updateMovement();
-
+	pacman->update();
+	for(int i = 0; i < ghosts.size(); i++)
+	{
+		ghosts[i]->move();
+	}
 	//Update blocks
 	//updateTargets();
 
@@ -222,7 +246,7 @@ void CavePacman::checkInput()
 
 	//For Testing, keyboard events
 	//Check key events every 30 frames
-	if(frames%30==0)
+	if(frames%5==0)
 	{
 		//Check W
 		if(GetAsyncKeyState(87)!=0)
@@ -253,55 +277,91 @@ void CavePacman::checkInput()
 			direction = 0;
 		}
 	}
+	//Check J
+	if(GetAsyncKeyState(74)!=0)
+	{
+		pacman->jump();
+	}
+
+	//Check K
+	if(GetAsyncKeyState(75)!=0)
+	{
+		pacman->rotate(-5.0f);
+	}
+	//Check L
+	else if(GetAsyncKeyState(76)!=0)
+	{
+		pacman->rotate(5.0f);
+	}
 }
 
 void CavePacman::updateMovement()
 {
+	int x = pacman->getXGrid();
+	int z = pacman->getZGrid();
 	switch(direction)
 	{
-		case LEFT: translateX -= 0.1f; break;
-		case RIGHT: translateX += 0.1f; break;
-		case UP: translateZ -= 0.1f; break;
-		case DOWN: translateZ += 0.1f; break;
+		case LEFT: if(grid[x-1][z]==true){pacman->moveX(-0.2f);} break;
+		case RIGHT: if(grid[x+1][z]==true){pacman->moveX(0.2f);} break;
+		case UP: if(grid[x][z-1]==true){pacman->moveZ(-0.2f);} break;
+		case DOWN: if(grid[x][z+1]==true){pacman->moveZ(0.2f);} break;
 	}
+	if(grid[x][z]==true)
+	{
+		std::cout << "THIS PLACE IS OCCUPIED" << std::endl;
+	}
+
+	//checkCollision();
 }
 
 void CavePacman::checkCollision()
 {
-
-}
-
-void CavePacman::updateTargets()
-{
-	if(frames%100==0 && blocks.size() < 3)
+	int x = pacman->getXGrid();
+	int z = pacman->getZGrid();
+	std::cout << "X: " << x << ", Z: " << z << "OCCUPIED: " << grid[x][z] << std::endl;
+	bool revert = false;
+	if(grid[x][z]==true)
 	{
-		//if(blocks.size() > 3)
-		//{
-		//	blocks.erase(blocks.begin());
-		//}
-		int wall = rand()%3;
-		float x = 0.0f;
-		float y = rand()%375/100.0f;
-		float z = 0.0f;
-		if(wall==0)
+		Block* block = objects[x][z];
+		if(block->contains(x*10, 0, z*10) || block->contains((x+1)*10, 0, z*10) || block->contains(x*10, 0, (z+1)*10) || block->contains((x+1)*10, 0, (z+1)*10))
 		{
-			x = -6.75f;
-			z = -(rand()%475)/100.0f;
+			revert = true;
 		}
-		else if(wall==1)
+	}
+	if(grid[x+1][z]==true)
+	{
+		Block* block = objects[x+1][z];
+		if(block->contains(x*10, 0, z*10) || block->contains((x+1)*10, 0, z*10) || block->contains(x*10, 0, (z+1)*10) || block->contains((x+1)*10, 0, (z+1)*10))
 		{
-			x = (rand()%475)/100.0f;
-			if(rand()%2==0){x = -x-2.0f;}
-			z = -6.75f;
+			revert = true;
 		}
-		else if(wall==2)
+	}
+	if(grid[x][z+1]==true)
+	{
+		Block* block = objects[x][z+1];
+		if(block->contains(x*10, 0, z*10) || block->contains((x+1)*10, 0, z*10) || block->contains(x*10, 0, (z+1)*10) || block->contains((x+1)*10, 0, (z+1)*10))
 		{
-			x = 4.75f;
-			z = -(rand()%475)/100.0f;
+			revert = true;
 		}
-		Block block = Block(x, y, z, 2.0f, 2.0f, 2.0f, 0.0f, 0.0f, 0.0f);
-		block.setColor(rand()%100/100.0f, rand()%100/100.0f, rand()%100/100.0f);
-		blocks.push_back(block);
+	}if(grid[x+1][z+1]==true)
+	{
+		Block* block = objects[x+1][z+1];
+		if(block->contains(x*10, 0, z*10) || block->contains((x+1)*10, 0, z*10) || block->contains(x*10, 0, (z+1)*10) || block->contains((x+1)*10, 0, (z+1)*10))
+		{
+			revert = true;
+		}
+	}
+
+	if(revert==true)
+	{
+		//Revert movement
+		switch(direction)
+		{
+			case LEFT: pacman->moveX(0.2f); break;
+			case RIGHT: pacman->moveX(-0.2f); break;
+			case UP: pacman->moveZ(0.2f); break;
+			case DOWN: pacman->moveZ(-0.2f); break;
+		}
 	}
 }
 
@@ -323,9 +383,14 @@ void CavePacman::draw()
 	//glVertex4f(wandForward[0], wandForward[1], wandForward[2], wandForward[3]);
 	//glEnd();
 
+	//glColor3f(1.0f, 0.0f, 0.0f);
+	//drawSphere(5.0f, 100, 100);
+
 	//Move environment
 	glPushMatrix();
-	glTranslatef(-translateX, 0, -translateZ);
+	glRotatef(pacman->getRotation(), 0.0f, 1.0f, 0.0f);
+	glTranslatef(-pacman->getX(), -pacman->getY(), -pacman->getZ());
+	
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
@@ -353,9 +418,20 @@ void CavePacman::draw()
 		Coordinate* c = coordinates[i];
 		objects[c->x][c->z]->draw();
 	}
+	glDisable(GL_TEXTURE_2D);
+	//Draw orbs
+	for(int i = 0; i < orbCoordinates.size(); i++)
+	{
+		Coordinate* c = orbCoordinates[i];
+		orbs[c->x][c->z]->draw();
+	}
+
+	for(int i = 0; i < ghosts.size(); i++)
+	{
+		ghosts[i]->draw();
+	}
 
 	//Draw border
-	glDisable(GL_TEXTURE_2D);
 	draw3DRectangleWithoutTop(-5, -5, -5, 170, 10, 180);
 
 	//Move to old location
@@ -473,4 +549,32 @@ void CavePacman:: draw3DRectangleWithoutTop(const float x1, const float y1, cons
 	glVertex3f(x1+w1, y1+h1, z1);
 	glVertex3f(x1+w1, y1+h1, z1+d1);
 	glEnd();
+}
+
+void CavePacman:: drawSphere(double r, int lats, int longs) 
+{
+	float M_PI = 3.14159265359f;
+      int i, j;
+      for(i = 0; i <= lats; i++) {
+            double lat0 = M_PI * (-0.5 + (double) (i - 1) / lats);
+           double z0  = sin(lat0);
+          double zr0 =  cos(lat0);
+    
+          double lat1 = M_PI * (-0.5 + (double) i / lats);
+           double z1 = sin(lat1);
+          double zr1 = cos(lat1);
+    
+          glBegin(GL_QUAD_STRIP);
+           for(j = 0; j <= longs; j++) {
+              double lng = 2 * M_PI * (double) (j - 1) / longs;
+              double x = cos(lng);
+               double y = sin(lng);
+    
+              glNormal3f(x * zr0, y * zr0, z0);
+               glVertex3f(x * zr0, y * zr0, z0);
+             glNormal3f(x * zr1, y * zr1, z1);
+              glVertex3f(x * zr1, y * zr1, z1);
+           }
+           glEnd();
+       }
 }
