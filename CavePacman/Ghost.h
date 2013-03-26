@@ -1,20 +1,29 @@
-#ifndef GHOST_H
-#define GHOST_H
-#include <vrj/Draw/OpenGL/App.h>
-#include <gl/GL.h>
-#include <gmtl/Math.h>
+#pragma once
+
+#include <string>
+#include <gmtl/Quat.h>
+#include <gmtl/Vec.h>
+//#include "CaveLib/CaveLib.h"
+
+class cModel;
+class cTexture;
+class ShaderProgram;
+
 class Ghost
 {
 public:
-	Ghost(float x, float z);
-	void drawSphere(double r, int lats, int longs);
-	void move();
-	void update();
-	void draw();
+	Ghost(std::string);
+	~Ghost(void);
+	void Draw();
+	void SetTexture(std::string);
+
 
 private:
-	float x, y, z, w, h, d;
-	float red, green, blue;
+	cModel* model;
+	cTexture* texture;
+	std::string modelFile;
+	gmtl::Vec3f position;
+	gmtl::Quatf rotation;
+
 };
-#endif
 

@@ -1,90 +1,97 @@
 #include "Ghost.h"
+#include <gl/glew.h>
+#include <CaveLib/texture.h>
+#include <cavelib/model.h>
+#include <cavelib/Shader.h>
+
+#include <gmtl/Xforms.h>
+#include <gmtl/Ray.h>
+#include <gmtl/VecOps.h>
+#include <gmtl/QuatOps.h>
+#include <gmtl/Generate.h>
+#include <gmtl/Math.h>
 
 
-Ghost::Ghost(float x, float z)
+Ghost::Ghost(std::string modelFile)
 {
-	this->x = (x*10.0f)-5.0f;
-	this->y = -5.0f;
-	this->z = (z*10.0f)-5.0f;
-	this->w = 10.0f;
-	this->h = 10.0f;
-	this->d = 10.0f;
+	this->modelFile = modelFile;
+	model = NULL;
 
-	this->red = (rand()%100)/100.0f;
-	this->green = (rand()%100)/100.0f;
-	this->blue = (rand()%100)/100.0f;
+	if(modelFile != "")
+	{
+		ModelLoadOptions* options = new ModelLoadOptions();
+		options->scale = 5;
+		model = CaveLib::loadModel(modelFile, options);
+		position = gmtl::Vec3f(0, -5 - model->bbox.mMin[1], -4 - model->bbox.mMin[2]);
+	}
 }
 
-void Ghost::move()
+
+Ghost::~Ghost(void)
 {
-	//Move randomly
-	int i = rand()%4;
-	float distance = (rand()%100)/100.0f;
-	switch(i)
-	{
-		case 0: x += distance; break;
-		case 1: x -= distance; break;
-		case 2: z += distance; break;
-		case 3: z -= distance; break;
-	}
-	if(x < -5.0f)
-	{
-		x = -5.0f;
-	}
-	else if(x > 180.0f)
-	{
-		x = 180.0f;
-	}
-	if(z < -5.0f)
-	{
-		z = -5.0f;
-	}
-	else if(z > 180.0f)
-	{
-		z = 180.0f;
-	}
+}
+
+void Ghost::SetTexture(std::string path)
+{
+
+	texture = CaveLib::loadTexture(path);
 
 }
 
-void Ghost::update()
+void Ghost::Draw()
 {
-
-}
-
-void Ghost::draw()
-{
-	glColor3f(red, green, blue);
+	glEnable(GL_BLEND);
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GEQUAL, 0.99);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_NORMALIZE);
+	glEnable(GL_TEXTURE_2D);
+	glDisable(GL_COLOR_MATERIAL);
 	glPushMatrix();
-	glTranslatef(x + 5.0f, 0.0f, z + 5.0f);
-	drawSphere(4.5, 20, 20);
+
+	
+	if(texture)
+	glBindTexture(GL_TEXTURE_2D, texture->tid());
+	else
+		std::cout<<"No texture"<<std::endl;
+
+	model->draw();
+
+	glDisable(GL_TEXTURE_2D);
+	/*glTranslatef(position[0], position[1], position[2]);
+	gmtl::Matrix44f rot = gmtl::make<gmtl::Matrix44f>(rotation);
+	glMultMatrixf(rot.mData);*/
+
+
+	/*shader->use();
+	gmtl::Matrix44f modelViewMatrix;
+	gmtl::identity(modelViewMatrix);
+	modelViewMatrix *= gmtl::makeTrans<gmtl::Matrix44f>(position);
+	modelViewMatrix *= gmtl::make<gmtl::Matrix44f>(rotation);
+
+	gmtl::Matrix33f normalMatrix;
+	normalMatrix.set(modelViewMatrix[0][0], modelViewMatrix[0][1], modelViewMatrix[0][2],
+		modelViewMatrix[1][0], modelViewMatrix[1][1], modelViewMatrix[1][2],
+		modelViewMatrix[2][0], modelViewMatrix[2][1], modelViewMatrix[2][2]);
+	normalMatrix = gmtl::transpose(gmtl::invert(normalMatrix));
+
+
+	gmtl::Matrix44f projectionMatrix;
+	glGetFloatv(GL_PROJECTION_MATRIX, projectionMatrix.mData);
+
+	shader->setUniformBool("useLighting", true);
+	shader->setUniformBool("useTexture", true);
+	shader->setUniformInt("s_texture", 0);
+	shader->setUniformVec3("lightPosition",gmtl::Vec3f(0, 0, 4));
+	shader->setUniformVec3("BrickColor", gmtl::Vec3f(1, 0.3, 0.2));
+	shader->setUniformVec3("MortarColor", gmtl::Vec3f(0.85, 0.86, 0.84));
+	//shader->setUniformVec2("BrickSize", gmtl::Vec2f(1, 0.5));
+	//shader->setUniformVec2("BrickPct", gmtl::Vec2f(0.9, 0.85));
+
+	shader->setUniformMatrix3("normalMatrix", normalMatrix);
+	shader->setUniformMatrix4("modelViewProjectionMatrix", projectionMatrix * modelViewMatrix);
+	shader->setUniformMatrix4("modelViewMatrix", modelViewMatrix);*/
+
+	//model->draw(shader);
 	glPopMatrix();
 }
-
-void Ghost::drawSphere(double r, int lats, int longs) 
-{
-	float M_PI = 3.14159265359f;
-      int i, j;
-      for(i = 0; i <= lats; i++) {
-            double lat0 = M_PI * (-0.5 + (double) (i - 1) / lats);
-           double z0  = sin(lat0);
-          double zr0 =  cos(lat0);
-    
-          double lat1 = M_PI * (-0.5 + (double) i / lats);
-           double z1 = sin(lat1);
-          double zr1 = cos(lat1);
-    
-          glBegin(GL_QUAD_STRIP);
-           for(j = 0; j <= longs; j++) {
-              double lng = 2 * M_PI * (double) (j - 1) / longs;
-              double x = cos(lng);
-               double y = sin(lng);
-    
-              glNormal3f(x * zr0, y * zr0, z0);
-               glVertex3f(x * zr0, y * zr0, z0);
-             glNormal3f(x * zr1, y * zr1, z1);
-              glVertex3f(x * zr1, y * zr1, z1);
-           }
-           glEnd();
-       }
-}
-

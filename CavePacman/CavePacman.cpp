@@ -1,4 +1,11 @@
+#include <GL/glew.h>
 #include "CavePacman.h"
+#include <CaveLib/texture.h>
+#include <cavelib/model.h>
+#include <cavelib/Shader.h>
+
+#include <fstream>
+#include <iostream>
 
 const int LEFT = 300, RIGHT = 301, UP = 302, DOWN = 303;
 
@@ -28,9 +35,12 @@ void CavePacman::init()
 			grid[x][y] = false;
 		}
 	}
-	for(int i = 0; i < 5; i++)
+
+	Json::Reader reader;
+	std::ifstream pFile("data/models/lol/models.json__", std::ios_base::in);
+	if(!reader.parse(pFile, models))
 	{
-		ghosts.push_back(new Ghost(rand()%20, rand()%20));
+		printf("Json Read Error: %s", reader.getFormatedErrorMessages().c_str());
 	}
 
 	//for(int z = 0; z < 10; z++)
@@ -128,8 +138,14 @@ void CavePacman::addOrb(int x, int z)
 
 void CavePacman::contextInit()
 {
+	glewInit();
 	glEnable(GL_DEPTH_TEST);
 	glShadeModel(GL_SMOOTH);
+
+
+	Ghost* g = new Ghost("data/models/LoL/" + models[85]["dir"].asString() + "/" + models[85]["models"][1]["model"].asString());
+	g->SetTexture("data/models/LoL/" + models[85]["dir"].asString() + "/" + models[85]["models"][1]["texture"].asString());
+	ghosts.push_back(g);
 }
 
 gmtl::Vec4f CavePacman::collisionLinePlane(gmtl::Vec3f A, gmtl::Vec3f B, gmtl::Planef plane)
@@ -155,7 +171,7 @@ void CavePacman::preFrame()
 	pacman->update();
 	for(int i = 0; i < ghosts.size(); i++)
 	{
-		ghosts[i]->move();
+		//ghosts[i]->move();
 	}
 	//Update blocks
 	//updateTargets();
@@ -438,7 +454,7 @@ void CavePacman::draw()
 
 	for(int i = 0; i < ghosts.size(); i++)
 	{
-		ghosts[i]->draw();
+		ghosts[i]->Draw();
 	}
 
 	//Test
