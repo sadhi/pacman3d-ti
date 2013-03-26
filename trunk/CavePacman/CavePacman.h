@@ -10,6 +10,7 @@
 #include <cavelib/cavelib.h>
 #include <cavelib/texture.h>
 #include <vector>
+#include <json/json.h>
 #include "block.h"
 #include "Orb.h"
 #include "SuperOrb.h"
@@ -17,6 +18,8 @@
 #include "Coordinate.h"
 #include "Pacman.h"
 #include "Ghost.h"
+
+
 
 class CavePacman :
 	public vrj::opengl::App
@@ -69,5 +72,6 @@ private:
 
 	Pacman* pacman;
 	std::vector<Ghost*> ghosts;
+	Json::Value models;
 };
 
