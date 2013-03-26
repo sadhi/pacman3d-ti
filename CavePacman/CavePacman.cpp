@@ -274,7 +274,7 @@ void CavePacman::checkInput()
 		}
 		else
 		{
-			direction = 0;
+			//direction = 0;
 		}
 	}
 	//Check J
@@ -299,18 +299,28 @@ void CavePacman::updateMovement()
 {
 	int x = pacman->getXGrid();
 	int z = pacman->getZGrid();
+	int xGrid = x;
+	int zGrid = z;
+	//int xGrid2 = x;
+	//int zGrid2 = z;
 	switch(direction)
 	{
-		case LEFT: if(grid[x-1][z]==true){pacman->moveX(-0.2f);} break;
-		case RIGHT: if(grid[x+1][z]==true){pacman->moveX(0.2f);} break;
-		case UP: if(grid[x][z-1]==true){pacman->moveZ(-0.2f);} break;
-		case DOWN: if(grid[x][z+1]==true){pacman->moveZ(0.2f);} break;
+		case LEFT: xGrid = pacman->determineXGridLeft(-0.2f); break;
+		case RIGHT: xGrid = pacman->determineXGridRight(0.2f); break;
+		case UP: zGrid = pacman->determineZGridUp(-0.2f); break;
+		case DOWN: zGrid = pacman->determineZGridDown(0.2f); break;
 	}
-	if(grid[x][z]==true)
+	if(xGrid >= 0 && xGrid < 24 && zGrid >= 0 && zGrid < 24 && grid[xGrid][zGrid]==false)
 	{
-		std::cout << "THIS PLACE IS OCCUPIED" << std::endl;
+		switch(direction)
+		{
+			case LEFT: pacman->moveX(-0.2f); break;
+			case RIGHT: pacman->moveX(0.2f); break;
+			case UP: pacman->moveZ(-0.2f); break;
+			case DOWN: pacman->moveZ(0.2f); break;
+		}
 	}
-
+	
 	//checkCollision();
 }
 
@@ -429,6 +439,29 @@ void CavePacman::draw()
 	for(int i = 0; i < ghosts.size(); i++)
 	{
 		ghosts[i]->draw();
+	}
+
+	//Test
+	int xGrid = pacman->getXGrid();
+	int zGrid = pacman->getZGrid();
+	glColor3f(1.0f, 0.0f, 0.0f);
+	draw3DRectangle(-5.0f+(xGrid*10.0f), -5.0f, -5.0f+(zGrid*10.0f), 10.0f, 1.0f, 10.0f);
+	glColor3f(0.0f, 1.0f, 0.0f);
+	if(grid[xGrid+1][zGrid]==false)
+	{
+		draw3DRectangle(-5.0f+((xGrid+1)*10.0f), -5.0f, -5.0f+(zGrid*10.0f), 10.0f, 1.0f, 10.0f);
+	}
+	if(grid[xGrid-1][zGrid]==false)
+	{
+		draw3DRectangle(-5.0f+((xGrid-1)*10.0f), -5.0f, -5.0f+(zGrid*10.0f), 10.0f, 1.0f, 10.0f);
+	}
+	if(grid[xGrid][zGrid+1]==false)
+	{
+		draw3DRectangle(-5.0f+(xGrid*10.0f), -5.0f, -5.0f+((zGrid+1)*10.0f), 10.0f, 1.0f, 10.0f);
+	}
+	if(grid[xGrid][zGrid-1]==false)
+	{
+		draw3DRectangle(-5.0f+(xGrid*10.0f), -5.0f, -5.0f+((zGrid-1)*10.0f), 10.0f, 1.0f, 10.0f);
 	}
 
 	//Draw border

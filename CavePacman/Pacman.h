@@ -10,8 +10,12 @@ public:
 	float getY()const{return y;}
 	float getZ()const{return z;}
 	float getRotation()const{return rotation;}
-	int getXGrid()const{return (int)(x/10);}
-	int getZGrid()const{return (int)(z/10);}
+	int getXGrid();
+	int getZGrid();
+	int determineXGridLeft(float amount);
+	int determineXGridRight(float amount);
+	int determineZGridUp(float amount);
+	int determineZGridDown(float amount);
 	void setX(float x);
 	void setY(float y);
 	void setZ(float z);
