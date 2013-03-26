@@ -14,6 +14,36 @@ Pacman::Pacman(float x, float z)
 	this->direction = UP;
 }
 
+int Pacman::getXGrid()
+{
+	return (int)((x+5.0f)/10);
+}
+
+int Pacman::getZGrid()
+{
+	return (int)((z+5.0f)/10);
+}
+
+int Pacman::determineXGridLeft(float amount)
+{
+	return (int)((x+0.0f+amount)/10);
+}
+
+int Pacman::determineXGridRight(float amount)
+{
+	return (int)((x+10.0f+amount)/10);
+}
+
+int Pacman::determineZGridUp(float amount)
+{
+	return (int)((z+0.0f+amount)/10);
+}
+
+int Pacman::determineZGridDown(float amount)
+{
+	return (int)((z+10.0f+amount)/10);
+}
+
 void Pacman::setX(float x)
 {
 	this->x = x;
