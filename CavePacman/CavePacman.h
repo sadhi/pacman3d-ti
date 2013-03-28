@@ -4,13 +4,13 @@
 #include <Windows.h>
 #include <gl/GL.h>
 #include <gadget/Type/PositionInterface.h>
+#include <gadget/Type/DigitalProxy.h>
 #include <gadget/Type/KeyboardMouseInterface.h>
 #include <gadget/Type/KeyboardMouse/KeyEvent.h>
 #include <gadget/Type/KeyboardMouse/MouseEvent.h>
 #include <cavelib/cavelib.h>
 #include <cavelib/texture.h>
 #include <vector>
-#include <json/json.h>
 #include "block.h"
 #include "Orb.h"
 #include "SuperOrb.h"
@@ -18,13 +18,13 @@
 #include "Coordinate.h"
 #include "Pacman.h"
 #include "Ghost.h"
-
-
+#include "WayPoint.h"
 
 class CavePacman :
 	public vrj::opengl::App
 {
 public:
+
 	CavePacman(void);
 	~CavePacman(void);
 
@@ -38,6 +38,8 @@ public:
 	void drawTextured3DRectangle(const float x1, const float y1, const float z1, const float w1, const float h1, const float d1);
 	void draw3DRectangleWithoutTop(const float x1, const float y1, const float z1, const float w1, const float h1, const float d1);
 	void drawSphere(double r, int lats, int longs) ;
+	void placeWayPoints();
+	void drawWaypoint(float Corx, float Cory, bool up, bool down, bool left, bool right, int WPnr);
 
 	void addBlock(int x, int z);
 	void addOrb(int x, int z);
@@ -57,6 +59,12 @@ private:
 	gmtl::Vec4f wallPointLeft;
 	gmtl::Vec4f wallPointRight;
 	gmtl::Vec4f wallPointForward;
+
+	int rotate;
+	//gadget::PositionInterface  mWand;
+    gadget::DigitalInterface   mLeftButton;
+    gadget::DigitalInterface   mRightButton;
+	
 	int currentWallNr;
 	cTexture* texture;
 	std::vector<Block> blocks;
@@ -73,5 +81,7 @@ private:
 	Pacman* pacman;
 	std::vector<Ghost*> ghosts;
 	Json::Value models;
+	void CheckDir(float Corx, float Cory, float GX, float GY, bool up, bool down, bool left, bool right, int WPnr, int Gnr);
+	int CheckDir(bool up, bool down, bool left, bool right, int WPnr, int Gnr);
 };
 
