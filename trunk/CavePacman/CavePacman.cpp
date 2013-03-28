@@ -1,5 +1,7 @@
 #include <GL/glew.h>
 #include "CavePacman.h"
+#include <gl\GL.h>
+#include "glut.h"
 #include <CaveLib/texture.h>
 #include <cavelib/model.h>
 #include <cavelib/Shader.h>
@@ -8,6 +10,11 @@
 #include <iostream>
 
 const int LEFT = 300, RIGHT = 301, UP = 302, DOWN = 303;
+//cavegame
+float Gspeed=0.02, G1x=0, G1y=0, G2x=0, G2y=0, G3x=0, G3y=0, G4x=0, G4y=0;
+int G1dir=0, G2dir=0, G3dir=0, G4dir=0;
+int lastwpG1=0, lastwpG2=0, lastwpG3=0, lastwpG4=0;
+int wpcount=0;
 
 CavePacman::CavePacman(void)
 {
@@ -21,6 +28,8 @@ CavePacman::~CavePacman(void)
 void CavePacman::init()
 {
 	wand.init("VJWand");
+	mLeftButton.init("VJButton0");
+	mRightButton.init("VJButton1");
 	keyboard.init("VJKeyboard");
 	TextureLoadOptions* t = new TextureLoadOptions();
 	t->sampler = TextureLoadOptions::CLOSEST;
@@ -42,6 +51,7 @@ void CavePacman::init()
 	{
 		printf("Json Read Error: %s", reader.getFormatedErrorMessages().c_str());
 	}
+	rotate = 0;
 
 	//for(int z = 0; z < 10; z++)
 	//{
@@ -49,6 +59,223 @@ void CavePacman::init()
 	//	addBlock(2, z);
 	//}
 	loadLevel();
+}
+
+void CavePacman::placeWayPoints()
+{
+	//from top left to bottom right
+	//x y up down left right id
+	//line 1
+	drawWaypoint(5,5,false, true, false,true, 1);
+	drawWaypoint(35,5,false, true, true,true, 2);
+	drawWaypoint(75,5,false, true, true,false, 3);
+	drawWaypoint(95,5,false, true, false,true, 4);
+	drawWaypoint(135,5,false, true, true,true, 5);
+	drawWaypoint(165,5,false, true, false,true, 6);
+
+	//line 3
+	drawWaypoint(5,25,true, true, false,true, 7);
+	drawWaypoint(35,25,true, true, true,true, 8);
+	drawWaypoint(55,25,false, true, true,true, 9);
+	drawWaypoint(75,25,true, false, true,true, 10);
+	drawWaypoint(95,25,true, false, true,true, 11);
+	drawWaypoint(115,25,false, true, true,true, 12);
+	drawWaypoint(135,25,true, true, true,true, 13);
+	drawWaypoint(165,25,true, true, true,false, 14);
+
+	//line 5
+	drawWaypoint(5,45,true, false, false,true, 15);
+	drawWaypoint(35,45,true, true, true,false, 16);
+	drawWaypoint(55,45,true, false, false,true, 17);
+	drawWaypoint(75,45,false, true, true,false, 18);
+	drawWaypoint(95,45,false, true, true,false, 19);
+	drawWaypoint(115,45,true, false, true,false, 20);
+	drawWaypoint(135,45,true, true, false,true, 21);
+	drawWaypoint(165,45,true, false, true,false, 22);
+
+	//line 7
+	drawWaypoint(55,65,false, true, false,true, 23);
+	drawWaypoint(75,65,true, false, true,true, 24);
+	drawWaypoint(95,65,true, false, true,true, 25);
+	drawWaypoint(115,65,false, true, true,false, 26);
+
+	//line 9
+	drawWaypoint(35,85,true, true, false,true, 27);
+	drawWaypoint(55,85,true, true, true,false, 28);
+	drawWaypoint(115,85,true, true, false,true, 29);
+	drawWaypoint(135,85,true, true, true,false, 30);
+	
+	//line 10
+	drawWaypoint(55,95,true, true, false,true, 31);
+	drawWaypoint(115,95,true, true, true,false, 32);
+
+	//line 12
+	drawWaypoint(5,115,false, true, false,true, 33);
+	drawWaypoint(35,115,true, true, true,true, 34);
+	drawWaypoint(55,115,true, false, true,true, 35);
+	drawWaypoint(75,115,false, true, true,false, 36);
+	drawWaypoint(95,115,false, true, false,true, 37);
+	drawWaypoint(115,115,true, false, true,true, 38);
+	drawWaypoint(135,115,true, true, true,true, 39);
+	drawWaypoint(165,115,false, true, true,false, 40);
+
+	//line 14
+	drawWaypoint(5,135,true, false, false,true, 41);
+	drawWaypoint(15,135,false, true, true,false, 42);
+	drawWaypoint(35,135,true, true, false,true, 43);
+	drawWaypoint(55,135,false, true, true,true, 44);
+	drawWaypoint(75,135,true, false, true,true, 45);
+	drawWaypoint(95,135,true, false, true,true, 46);
+	drawWaypoint(115,135,false, true, true,true, 47);
+	drawWaypoint(135,135,true, true, true,false, 48);
+	drawWaypoint(155,135,false, true, false,true, 49);
+	drawWaypoint(165,135,true, false, true,false, 50);
+
+	//line 16
+	drawWaypoint(5,135,true, false, false,true, 41);
+	drawWaypoint(15,135,false, true, true,false, 42);
+	drawWaypoint(35,135,true, true, false,true, 43);
+	drawWaypoint(55,135,false, true, true,true, 44);
+	drawWaypoint(75,135,true, false, true,true, 45);
+	drawWaypoint(95,135,true, false, true,true, 46);
+	drawWaypoint(115,135,false, true, true,true, 47);
+	drawWaypoint(135,135,true, true, true,false, 48);
+	drawWaypoint(155,135,false, true, false,true, 49);
+	drawWaypoint(165,135,true, false, true,false, 50);
+}
+
+void CavePacman::drawWaypoint(float Corx, float Cory, bool up, bool down, bool left, bool right, int WPnr)
+{
+	if(WPnr!=lastwpG1){
+		CheckDir( Corx,  Cory, G1x, G1y,  up,  down,  left,  right, WPnr, 1);}
+	if(WPnr!=lastwpG2){
+		CheckDir( Corx,  Cory, G2x, G2y,  up,  down,  left,  right, WPnr, 2);}
+	if(WPnr!=lastwpG3){
+		CheckDir( Corx,  Cory, G3x, G3y,  up,  down,  left,  right, WPnr, 3);}
+	if(WPnr!=lastwpG4){
+		CheckDir( Corx,  Cory, G4x, G4y,  up,  down,  left,  right, WPnr, 4);}
+
+	glPushMatrix();
+	glTranslatef(Corx,0,Cory);
+	glutSolidSphere(0.3,16,16);
+	if(down){
+		glutSolidCone(0.2,1.0,8,8);
+	}
+	if(up){
+		glRotatef(180,0,1,0);
+			glutSolidCone(0.2,1.0,8,8);
+		glRotatef(-180,0,1,0);
+	}
+	if(right){
+		glRotatef(90,0,1,0);
+		glutSolidCone(0.15,1.0,8,8);
+		glRotatef(-90,0,1,0);
+	}
+	if(left){
+		glRotatef(270,0,1,0);
+		glutSolidCone(0.15,1.0,8,8);
+		glRotatef(-270,0,1,0);
+	}
+	glPopMatrix();
+}
+
+void CavePacman::CheckDir(float Corx, float Cory, float GX, float GY, bool up, bool down, bool left, bool right, int WPnr, int Gnr)
+{
+	if(
+		sqrt(abs((Corx-GX)*(Corx-GX)) + abs((Cory-GY)*(Cory-GY)))<0.5 
+		)
+	{
+		wpcount++;
+		std::cout<<"["<<std::endl;
+		std::cout<<wpcount<<std::endl;
+		std::cout<<WPnr<<std::endl;
+		std::cout<<sqrt(abs((Corx-GX)*(Corx-GX)) + abs((Cory-GY)*(Cory-GY)))<<std::endl;
+		if(Gnr==1){
+			G1dir = CheckDir( up,  down,  left,  right, WPnr, Gnr);}
+		else if(Gnr==2){
+			G2dir = CheckDir( up,  down,  left,  right, WPnr, Gnr);
+		}
+		else if(Gnr==3){
+			G3dir = CheckDir( up,  down,  left,  right, WPnr, Gnr);
+		}
+		else if(Gnr==4){
+			G4dir = CheckDir( up,  down,  left,  right, WPnr, Gnr);
+		}
+		std::cout<<G1dir<<std::endl;
+	}
+}
+
+int CavePacman::CheckDir( bool up, bool down, bool left, bool right, int WPnr, int Gnr)
+{
+	if(Gnr==1){
+	if(G1dir==1){down=false;}
+	if(G1dir==2){left=false;}
+	if(G1dir==3){up=false;}
+	if(G1dir==4){right=false;}
+	}else if(Gnr==2){
+		if(G2dir==1){down=false;}
+		if(G2dir==2){left=false;}
+		if(G2dir==3){up=false;}
+		if(G2dir==4){right=false;}
+	}else if(Gnr==3){
+		if(G3dir==1){down=false;}
+		if(G3dir==2){left=false;}
+		if(G3dir==3){up=false;}
+		if(G3dir==4){right=false;}
+	}else if(Gnr==4){
+		if(G4dir==1){down=false;}
+		if(G4dir==2){left=false;}
+		if(G4dir==3){up=false;}
+		if(G4dir==4){right=false;}
+	}
+
+	std::cout<<"#*#"<<std::endl;
+	std::cout<<G1dir<<std::endl;
+	std::cout<<"###"<<std::endl;
+	std::cout<<up<<std::endl;
+	std::cout<<right<<std::endl;
+	std::cout<<down<<std::endl;
+	std::cout<<left<<std::endl;
+	std::cout<<"---"<<std::endl;
+
+	int upr, leftr, downr, rightr, Gdir;
+
+	if(up){upr=rand(); Gdir=1;}
+	else{upr=-1;}
+	if(left){leftr=rand();
+		if(leftr>upr)
+		{Gdir=4;}}
+	else{leftr=-1;}
+	if(down){downr=rand();
+		if(downr>leftr && downr>upr)
+		{Gdir=3;}}
+	else{downr=-1;}
+	if(right){rightr=rand();
+		if(rightr>downr && rightr>leftr && rightr>upr)
+		{Gdir=2;}}
+	else{rightr=-1;}
+
+	std::cout<<"---"<<std::endl;
+	std::cout<<upr<<std::endl;
+	std::cout<<rightr<<std::endl;
+	std::cout<<downr<<std::endl;
+	std::cout<<leftr<<std::endl;
+	std::cout<<"###"<<std::endl;
+	std::cout<<G1dir<<std::endl;
+	std::cout<<"#*#"<<std::endl;
+
+	if(Gnr==1){
+		lastwpG1=WPnr;
+	}else if(Gnr==2){
+		lastwpG2=WPnr;
+	}else if(Gnr==3){
+		lastwpG3=WPnr;
+	}else if(Gnr==4){
+		lastwpG4=WPnr;
+	}
+	
+	return Gdir;
+	
 }
 
 void CavePacman::loadLevel()
@@ -120,6 +347,7 @@ void CavePacman::loadLevel()
 
 	//Test
 	addOrb(0, 0);
+	placeWayPoints();
 }
 
 void CavePacman::addBlock(int x, int z)
@@ -198,6 +426,15 @@ void CavePacman::preFrame()
 	//		break;
 	//	}
 	//}
+
+	if(mRightButton->getData() == gadget::Digital::ON)
+	{
+		rotate +=1;
+	}
+	if(mLeftButton->getData() == gadget::Digital::ON)
+	{
+		rotate -=1;
+	}
 	
 	frames++;
 	if(frames==10000)
@@ -417,7 +654,7 @@ void CavePacman::draw()
 	glRotatef(pacman->getRotation(), 0.0f, 1.0f, 0.0f);
 	glTranslatef(-pacman->getX(), -pacman->getY(), -pacman->getZ());
 	
-
+	
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 	glEnable(GL_TEXTURE_2D);
