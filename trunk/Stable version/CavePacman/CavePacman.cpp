@@ -123,9 +123,52 @@ void CavePacman::loadLevel()
 
 void CavePacman::loadOrbs()
 {
-	addDefaultOrb(13, 11);
-	addSuperOrb(13, 10);
+	//line 1
+	addDefaultOrb(0, 0);
+	addDefaultOrb(1, 0);
+	addDefaultOrb(2, 0);
+	addDefaultOrb(3, 0);
+	addDefaultOrb(4, 0);
+	addDefaultOrb(5, 0);
+	addDefaultOrb(6, 0);
+	addDefaultOrb(7, 0);
+	addDefaultOrb(9, 0);
+	addDefaultOrb(10, 0);
+	addDefaultOrb(11, 0);
+	addDefaultOrb(12, 0);
+	addDefaultOrb(13, 0);
+	addDefaultOrb(14, 0);
+	addDefaultOrb(15, 0);
+	addDefaultOrb(16, 0);
+
+	//line 2
+	addDefaultOrb(0, 1);
+	addDefaultOrb(3, 1);
+	addDefaultOrb(7, 1);
+	addDefaultOrb(9, 1);
+	addDefaultOrb(13, 1);
+	addDefaultOrb(16, 1);
+
+	//line 3
+	addDefaultOrb(0, 2);
+	addDefaultOrb(1, 2);
+	addDefaultOrb(2, 2);
+	addDefaultOrb(3, 2);
+	addDefaultOrb(4, 2);
+	addDefaultOrb(5, 2);
+	addDefaultOrb(6, 2);
+	addDefaultOrb(7, 2);
+	addDefaultOrb(8, 2);
+	addDefaultOrb(9, 2);
+	addDefaultOrb(10, 2);
+	addDefaultOrb(11, 2);
+	addDefaultOrb(12, 2);
+	addDefaultOrb(13, 2);
+	addDefaultOrb(14, 2);
+	addDefaultOrb(15, 2);
+	addDefaultOrb(16, 2);
 }
+
 
 void CavePacman::loadWayPoints()
 {
@@ -553,23 +596,13 @@ void CavePacman::updateGhosts()
 void CavePacman::bufferPreDraw()
 {
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void CavePacman::draw()
 {
-	glClear(GL_DEPTH_BUFFER_BIT);
-	//glMatrixMode(GL_MODELVIEW);
-	//glLoadIdentity();
-
-	//glBegin(GL_LINES);
-	//glColor3f(0.0f, 1.0f, 1.0f);
-	//glVertex4f(wandOrigin[0], wandOrigin[1], wandOrigin[2], wandOrigin[3]);
-	//glVertex4f(wandForward[0], wandForward[1], wandForward[2], wandForward[3]);
-	//glEnd();
-
-	//glColor3f(1.0f, 0.0f, 0.0f);
-	//drawSphere(5.0f, 100, 100);
+	glEnable (GL_DEPTH_TEST);
+    
 
 	//Move environment
 	glPushMatrix();
@@ -582,20 +615,12 @@ void CavePacman::draw()
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, texture->tid());
 
-	//glColor3f(0.0f, 0.0f, 1.0f);
-	//drawTextured3DRectangle(wandOrigin[0]-0.05f, wandOrigin[1]-0.05f, wandOrigin[2]-0.05f, 0.1f, 0.1f, 0.1f);
-
-	//glColor3f(0.0f, 0.0f, 1.0f);
-	//drawTextured3DRectangle(wandForward[0]-0.05f, wandForward[1]-0.05f, wandForward[2]-0.05f, 0.1f, 0.1f, 0.1f);
-
-
-	//glColor3f(1.0f, 0.0f, 0.0f);
-	//switch(currentWallNr)
-	//{
-	//	case 0: draw3DRectangle(wallPointLeft[0]-0.05f, wallPointLeft[1]-0.05f, wallPointLeft[2]-0.05f, 0.1f, 0.1f, 0.1f); break;
-	//	case 1: draw3DRectangle(wallPointForward[0]-0.05f, wallPointForward[1]-0.05f, wallPointForward[2]-0.05f, 0.1f, 0.1f, 0.1f); break;
-	//	case 2: draw3DRectangle(wallPointRight[0]-0.05f, wallPointRight[1]-0.05f, wallPointRight[2]-0.05f, 0.1f, 0.1f, 0.1f); break;
-	//}
+    glEnable (GL_LIGHTING); //enable the lighting
+    glEnable (GL_LIGHT0); //enable LIGHT0, our Diffuse Light
+	GLfloat lightpos[] = {1.0f, 1.0f, 1.0f, 0.0f};
+	glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
+    glEnable (GL_COLOR_MATERIAL);
+    glShadeModel (GL_SMOOTH); //set the shader to smooth shader
 
 	//Draw objects
 	for(int i = 0; i < coordinates.size(); i++)
@@ -603,6 +628,9 @@ void CavePacman::draw()
 		Coordinate* c = coordinates[i];
 		sprites[c->x][c->z]->draw();
 	}
+	glDisable (GL_LIGHTING);
+    glDisable (GL_LIGHT0);
+	glDisable (GL_COLOR_MATERIAL);
 	glDisable(GL_TEXTURE_2D);
 
 	for(int i = 0; i < ghosts.size(); i++)

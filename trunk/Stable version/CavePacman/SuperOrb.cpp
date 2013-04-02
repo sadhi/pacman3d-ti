@@ -11,7 +11,7 @@ SuperOrb::SuperOrb(int x, int z):Orb(x, z)
 	this->h = 10.0f;
 	this->d = 10.0f;
 
-	this->radius = 3.0f;
+	this->radius = 1.8f;
 }
 
 void SuperOrb:: update()
