@@ -12,7 +12,7 @@ DefaultOrb::DefaultOrb(int x, int z):Orb(x, z)
 	this->h = 10.0f;
 	this->d = 10.0f;
 
-	this->radius = 1.5f;
+	this->radius = 0.6f;
 }
 
 void DefaultOrb:: update()
