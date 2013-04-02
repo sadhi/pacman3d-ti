@@ -18,6 +18,10 @@ public:
 	bool Sprite:: contains(float x2, float y2, float z2);
 	int Sprite:: getType()const{return type;}
 	bool Sprite:: isType(int type);
+	float Sprite:: getX()const{return x;}
+	float Sprite:: getZ()const{return z;}
+	void Sprite:: setX(float x){this->x = x;}
+	void Sprite:: setZ(float z){this->z = z;}
 	virtual void update();
 	virtual void draw();
 	void drawSphere(double radius, int nSlice, int nStack);

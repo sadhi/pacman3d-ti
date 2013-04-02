@@ -9,6 +9,7 @@
 #include <gadget/Type/KeyboardMouse/MouseEvent.h>
 #include <cavelib/cavelib.h>
 #include <cavelib/texture.h>
+#include <math.h>
 #include <vector>
 #include <json/json.h>
 #include "block.h"
@@ -18,6 +19,7 @@
 #include "Coordinate.h"
 #include "Pacman.h"
 #include "Ghost.h"
+#include "WayPoint.h"
 
 class CavePacman :
 	public vrj::opengl::App
@@ -41,8 +43,11 @@ public:
 	void addDefaultOrb(int x, int z);
 	void addSuperOrb(int x, int z);
 	void loadLevel();
+	void loadOrbs();
+	void loadWayPoints();
 	void checkInput();
 	void updateMovement();
+	void updateGhosts();
 	void clearLocation(int x, int z);
 	
 
@@ -67,5 +72,6 @@ private:
 
 	Pacman* pacman;
 	std::vector<Ghost*> ghosts;
+	std::vector<WayPoint*> wayPoints;
 	Json::Value models;
 };
