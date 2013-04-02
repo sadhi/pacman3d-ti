@@ -49,6 +49,8 @@ void CavePacman::init()
 	//	addBlock(2, z);
 	//}
 	loadLevel();
+	loadOrbs();
+	loadWayPoints();
 }
 
 void CavePacman::loadLevel()
@@ -117,10 +119,101 @@ void CavePacman::loadLevel()
 		std::cout << "Block: " << x << ", " << z << std::endl;
 	}
 	std::cout << "Finished" << std::endl;
+}
 
-	//Test
+void CavePacman::loadOrbs()
+{
 	addDefaultOrb(13, 11);
 	addSuperOrb(13, 10);
+}
+
+void CavePacman::loadWayPoints()
+{
+	//from top left to bottom right
+	//x y up down left right id
+	//line 1
+	wayPoints.push_back(new WayPoint(0,0,false, true, false,true));
+	wayPoints.push_back(new WayPoint(30,0,false, true, true,true));
+	wayPoints.push_back(new WayPoint(70,0,false, true, true,false));
+	wayPoints.push_back(new WayPoint(90,0,false, true, false,true));
+	wayPoints.push_back(new WayPoint(130,0,false, true, true,true));
+	wayPoints.push_back(new WayPoint(160,0,false, true, false,true));
+
+	//line 3
+	wayPoints.push_back(new WayPoint(0,20,true, true, false,true));
+	wayPoints.push_back(new WayPoint(30,20,true, true, true,true));
+	wayPoints.push_back(new WayPoint(50,20,false, true, true,true));
+	wayPoints.push_back(new WayPoint(70,20,true, false, true,true));
+	wayPoints.push_back(new WayPoint(90,20,true, false, true,true));
+	wayPoints.push_back(new WayPoint(110,20,false, true, true,true));
+	wayPoints.push_back(new WayPoint(130,20,true, true, true,true));
+	wayPoints.push_back(new WayPoint(160,20,true, true, true,false));
+
+	//line 0
+	wayPoints.push_back(new WayPoint(0,40,true, false, false,true));
+	wayPoints.push_back(new WayPoint(30,40,true, true, true,false));
+	wayPoints.push_back(new WayPoint(50,40,true, false, false,true));
+	wayPoints.push_back(new WayPoint(70,40,false, true, true,false));
+	wayPoints.push_back(new WayPoint(90,40,false, true, true,false));
+	wayPoints.push_back(new WayPoint(110,40,true, false, true,false));
+	wayPoints.push_back(new WayPoint(130,40,true, true, false,true));
+	wayPoints.push_back(new WayPoint(160,40,true, false, true,false));
+
+	//line 7
+	wayPoints.push_back(new WayPoint(50,60,false, true, false,true));
+	wayPoints.push_back(new WayPoint(70,60,true, false, true,true));
+	wayPoints.push_back(new WayPoint(90,60,true, false, true,true));
+	wayPoints.push_back(new WayPoint(110,60,false, true, true,false));
+
+	//line 9
+	wayPoints.push_back(new WayPoint(30,80,true, true, false,true));
+	wayPoints.push_back(new WayPoint(50,80,true, true, true,false));
+	wayPoints.push_back(new WayPoint(110,80,true, true, false,true));
+	wayPoints.push_back(new WayPoint(130,80,true, true, true,false));
+	
+	//line 10
+	wayPoints.push_back(new WayPoint(50,90,true, true, false,true));
+	wayPoints.push_back(new WayPoint(110,90,true, true, true,false));
+
+	//line 12
+	wayPoints.push_back(new WayPoint(0,110,false, true, false,true));
+	wayPoints.push_back(new WayPoint(30,110,true, true, true,true));
+	wayPoints.push_back(new WayPoint(50,110,true, false, true,true));
+	wayPoints.push_back(new WayPoint(70,110,false, true, true,false));
+	wayPoints.push_back(new WayPoint(90,110,false, true, false,true));
+	wayPoints.push_back(new WayPoint(110,110,true, false, true,true));
+	wayPoints.push_back(new WayPoint(130,110,true, true, true,true));
+	wayPoints.push_back(new WayPoint(160,110,false, true, true,false));
+
+	//line 14
+	wayPoints.push_back(new WayPoint(0,130,true, false, false,true));
+	wayPoints.push_back(new WayPoint(10,130,false, true, true,false));
+	wayPoints.push_back(new WayPoint(30,130,true, true, false,true));
+	wayPoints.push_back(new WayPoint(50,130,false, true, true,true));
+	wayPoints.push_back(new WayPoint(70,130,true, false, true,true));
+	wayPoints.push_back(new WayPoint(90,130,true, false, true,true));
+	wayPoints.push_back(new WayPoint(110,130,false, true, true,true));
+	wayPoints.push_back(new WayPoint(130,130,true, true, true,false));
+	wayPoints.push_back(new WayPoint(150,130,false, true, false,true));
+	wayPoints.push_back(new WayPoint(160,130,true, false, true,false));
+
+	//line 16
+	wayPoints.push_back(new WayPoint(0,150,false, true, false,true));
+	wayPoints.push_back(new WayPoint(10,150,true, false, true,true));
+	wayPoints.push_back(new WayPoint(30,150,true, false, true,false));
+	wayPoints.push_back(new WayPoint(50,150,true, false, false,true));
+	wayPoints.push_back(new WayPoint(70,150,false, true, true,false));
+	wayPoints.push_back(new WayPoint(90,150,false, true, false,true));
+	wayPoints.push_back(new WayPoint(110,150,true, false, true,false));
+	wayPoints.push_back(new WayPoint(130,150,true, false, false,true));
+	wayPoints.push_back(new WayPoint(150,150,true, false, true,true));
+	wayPoints.push_back(new WayPoint(160,150,false, true, true,false));
+
+	//line 18
+	wayPoints.push_back(new WayPoint(0,170,true, false, false,true));
+	wayPoints.push_back(new WayPoint(70,170,true, false, true,true));
+	wayPoints.push_back(new WayPoint(90,170,true, false, true,true));
+	wayPoints.push_back(new WayPoint(160,170,true, false, true,false));
 }
 
 void CavePacman::addBlock(int x, int z)
@@ -166,8 +259,12 @@ void CavePacman::contextInit()
 	glEnable(GL_DEPTH_TEST);
 	glShadeModel(GL_SMOOTH);
 
-	Ghost* ghost = new Ghost(13, 12);
+	Ghost* ghost = new Ghost(13, 11);
+	Ghost* ghost2 = new Ghost(13, 12);
+	Ghost* ghost3 = new Ghost(13, 13);
 	ghosts.push_back(ghost);
+	ghosts.push_back(ghost2);
+	ghosts.push_back(ghost3);
 }
 
 gmtl::Vec4f CavePacman::collisionLinePlane(gmtl::Vec3f A, gmtl::Vec3f B, gmtl::Planef plane)
@@ -188,13 +285,11 @@ gmtl::Vec4f CavePacman::collisionLinePlane(gmtl::Vec3f A, gmtl::Vec3f B, gmtl::P
 
 void CavePacman::preFrame()
 {
+	//Sleep(100);
 	checkInput();
 	updateMovement();
 	pacman->update();
-	for(int i = 0; i < ghosts.size(); i++)
-	{
-		//ghosts[i]->move();
-	}
+	updateGhosts();
 	//Update blocks
 	//updateTargets();
 
@@ -393,6 +488,68 @@ void CavePacman::updateMovement()
 	}
 }
 
+void CavePacman::updateGhosts()
+{
+	for(int i = 0; i < ghosts.size(); i++)
+	{
+		Ghost* ghost = ghosts[i];
+		ghost->update();	
+		bool checkWayPoints = false;
+		int x2 = 0;
+		int z2 = 0;
+		float modX = fmodf(ghost->getX()+5, 10.0f);
+		std::cout << "X: " << ((int)(ghost->getX()+5)) << std::endl;
+		std::cout << "MODX: " << modX << std::endl;
+		float modZ = fmodf(ghost->getZ()+5, 10.0f);
+		std::cout << "Z: " << ((int)(ghost->getZ()+5)) << std::endl;
+		std::cout << "MODZ: " << modZ << std::endl;
+
+		if(modX >= 9.9f || modX <= 0.1f)
+		{
+			std::cout << "X: " << ((int)(ghost->getX()+5)) << std::endl;
+			if(modX >= 9.9f)
+			{
+				x2 = (int)((ghost->getX()+5)-modX+10.0f);
+			}
+			else
+			{
+				x2 = (int)((ghost->getX()+5)-modX);
+			}
+			std::cout << "X2: " << x2 << std::endl;
+			if(modZ >= 9.9f || modZ <= 0.1f)
+			{
+				std::cout << "Z: " << ((int)(ghost->getZ()+5)) << std::endl;
+				if(modZ >= 9.9f)
+				{
+					z2 = (int)((ghost->getZ()+5)-modZ+10.0f);
+				}
+				else
+				{
+					z2 = (int)((ghost->getZ()+5)-modZ);
+				}
+				std::cout << "Z2: " << z2 << std::endl;
+				checkWayPoints = true;
+			}
+		}
+		if(checkWayPoints==true)
+		{
+			ghost->setX(x2-5);
+			ghost->setZ(z2-5);
+
+			for(int w = 0; w < wayPoints.size(); w++)
+			{
+				if(x2 == wayPoints[w]->getX() && z2 == wayPoints[w]->getZ())
+				{
+					std::cout << "Old Direction: " << ghost->getDirection() << std::endl;
+					int newDirection = wayPoints[w]->getNewDirection(ghost->getDirection());
+					std::cout << "New Direction: " << newDirection << std::endl;
+					ghost->setDirection(newDirection);
+				}
+			}
+		}
+	}
+}
+
 void CavePacman::bufferPreDraw()
 {
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -474,6 +631,15 @@ void CavePacman::draw()
 	if(xGrid >= 0 && xGrid < 17 && zGrid-1 >= 0 && zGrid-1 < 18 && grid[xGrid][zGrid-1]==false)
 	{
 		draw3DRectangle(-5.0f+(xGrid*10.0f), -5.0f, -5.0f+((zGrid-1)*10.0f), 10.0f, 0.1f, 10.0f);
+	}
+
+	//Debug Waypoints
+	glColor3f(1.0f, 0.0f, 1.0f);
+	for(int i = 0; i < wayPoints.size(); i++)
+	{
+		float x = wayPoints[i]->getX();
+		float z = wayPoints[i]->getZ();
+		draw3DRectangle(-5+x, -5, -5+z, 10.0f, 0.2f, 10.0f);
 	}
 
 	//Draw border

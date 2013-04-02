@@ -54,6 +54,10 @@ Ghost::Ghost(int x, int z):Sprite(x, z)
 		position = gmtl::Vec3f(0, -5 - model->bbox.mMin[1], -4 - model->bbox.mMin[2]);
 	}
 	texture = CaveLib::loadTexture(texturePath);
+
+
+	direction = UP;
+	rotation = 180;
 }
 
 
@@ -83,6 +87,88 @@ bool Ghost::intersects(float x2, float y2, float z2)
 	}
 }
 
+void Ghost::update()
+{
+	switch(direction)
+	{
+		case LEFT: x -= 0.2f; break;
+		case RIGHT: x += 0.2f; break;
+		case UP: z -= 0.2f; break;
+		case DOWN: z += 0.2f; break;
+	}
+	if(x < -5)
+	{
+		x = -5;
+	}
+	else if(x > 155)
+	{
+		x = 155;
+	}
+	if(z < -5)
+	{
+		z = -5;
+	}
+	else if(z > 165)
+	{
+		z = 165;
+	}
+
+	//Rotation
+	if(direction==LEFT && rotation!=90)
+	{
+		if(rotation > 90)
+		{
+			rotation -= 3;
+		}
+		else if(rotation < 90)
+		{
+			rotation += 3;
+		}
+	}
+	else if(direction==RIGHT && rotation!=270)
+	{
+		if(rotation > 270)
+		{
+			rotation -= 3;
+		}
+		else if(rotation < 270)
+		{
+			rotation += 3;
+		}
+	}
+	else if(direction==UP && rotation!=180)
+	{
+		if(rotation > 180)
+		{
+			rotation -= 3;
+		}
+		else if(rotation < 180)
+		{
+			rotation += 3;
+		}
+	}
+	else if(direction==DOWN && rotation!=0)
+	{
+		if(rotation > 180)
+		{
+			rotation += 3;
+		}
+		else
+		{
+			rotation -= 3;
+		}
+		rotation = 0;
+	}
+	if(rotation > 360)
+	{
+		rotation -= 360;
+	}
+	else if(rotation < 0)
+	{
+		rotation += 360;
+	}
+}
+
 void Ghost::draw()
 {
 	glEnable(GL_BLEND);
@@ -94,8 +180,9 @@ void Ghost::draw()
 	glDisable(GL_COLOR_MATERIAL);
 	glPushMatrix();
 	glTranslatef(x + 5.0f, -5.0f, z + 5.0f);
+	glRotatef(-rotation, 0.0f, 1.0f, 0.0f);
 	glColor4f(red, green, blue, 1.0f);
-	std::cout << "Color: " << red << ", " << green << ", " << blue << std::endl;
+	//std::cout << "Color: " << red << ", " << green << ", " << blue << std::endl;
 	if(texture)
 	glBindTexture(GL_TEXTURE_2D, texture->tid());
 	else

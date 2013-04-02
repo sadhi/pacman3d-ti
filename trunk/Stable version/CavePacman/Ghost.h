@@ -13,9 +13,13 @@ class ShaderProgram;
 class Ghost: public Sprite
 {
 public:
+	static const int LEFT = 1, RIGHT = 2, UP = 3, DOWN = 4;
 	Ghost(int x, int z);
 	~Ghost(void);
 	bool intersects(float x2, float y2, float z2);
+	int Ghost:: getDirection()const{return direction;}
+	void Ghost:: setDirection(float direction){this->direction = direction;}
+	virtual void update();
 	virtual void draw();
 
 private:
@@ -23,9 +27,9 @@ private:
 	cTexture* texture;
 	std::string modelFile;
 	gmtl::Vec3f position;
-	gmtl::Quatf rotation;
 
 	float red, green, blue;
-
+	int direction;
+	int rotation;
 };
 #endif
