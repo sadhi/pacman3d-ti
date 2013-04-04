@@ -14,7 +14,7 @@ class Ghost: public Sprite
 {
 public:
 	static const int LEFT = 1, RIGHT = 2, UP = 3, DOWN = 4;
-	Ghost(int x, int z);
+	Ghost(int x, int z, int ghostNr);
 	~Ghost(void);
 	bool intersects(float x2, float y2, float z2);
 	int Ghost:: getDirection()const{return direction;}

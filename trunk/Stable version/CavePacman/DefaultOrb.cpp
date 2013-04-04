@@ -13,6 +13,8 @@ DefaultOrb::DefaultOrb(int x, int z):Orb(x, z)
 	this->d = 10.0f;
 
 	this->radius = 0.6f;
+
+	initSphere(radius, 16, 16);
 }
 
 void DefaultOrb:: update()
@@ -24,6 +26,6 @@ void DefaultOrb::draw()
 	glColor3f(1.0f, 1.0f, 0.0f);
 	glPushMatrix();
 	glTranslatef(x + 5.0f, 0.0f, z + 5.0f);
-	drawSphere(radius, 20, 20);
+	drawSphere();
 	glPopMatrix();
 }

@@ -35,10 +35,9 @@ public:
 	void bufferPreDraw();
 	void draw();
 	void draw3DRectangle(const float x1, const float y1, const float z1, const float w1, const float h1, const float d1);
-	void drawTextured3DRectangle(const float x1, const float y1, const float z1, const float w1, const float h1, const float d1);
 	void draw3DRectangleWithoutTop(const float x1, const float y1, const float z1, const float w1, const float h1, const float d1);
-	void drawSphere(double r, int lats, int longs) ;
 
+	void loadWall();
 	void addBlock(int x, int z);
 	void addDefaultOrb(int x, int z);
 	void addSuperOrb(int x, int z);

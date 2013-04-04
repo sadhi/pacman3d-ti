@@ -1,6 +1,5 @@
 #include "Sprite.h"
 
-
 Sprite::Sprite(int x, int z)
 {
 }
@@ -37,6 +36,7 @@ void Sprite:: drawSphere(double radius, int nSlice, int nStack)
 
     if(nSlice > 30) nSlice = 30;
     if(nStack > 30) nStack = 30;
+
 
     //Vertex
     for(i = 0;i <= nSlice;i++)
@@ -93,38 +93,62 @@ void Sprite:: drawSphere(double radius, int nSlice, int nStack)
 
 void Sprite:: draw3DRectangle(const float x1, const float y1, const float z1, const float w1, const float h1, const float d1)
 {
-	glNormal3d(0, 0, 1);
-	glBegin(GL_QUADS);
-	//back
-	glVertex3f(x1, y1, z1);
-	glVertex3f(x1, y1+h1, z1);
-	glVertex3f(x1+w1, y1+h1, z1);
-	glVertex3f(x1+w1, y1, z1);
+
+	x = x1;
+	y = y1;
+	z = z1;
+	w = w1;
+	h = h1;
+	d = d1;
+GLfloat vertices[] = {
+	x, y, z,   x, y, z+d,   x,  y+h,  z+d,   x,  y+h, z,
+     x+w, y, z,    x+w, y,  z+d,    x+w,  y+h,  z+d,    x+w,  y+h, z,
+    x, y, z,   x, y,  z+h,    x+w, y,  z+d,    x+w, y, z,
+    x,  y+h, z,   x,  y+h,  z+d,    x+w,  y+h,  z+d,    x+w,  y+h, z,
+    x, y, z,   x,  y+h, z,    x+w,  y+h, z,    x+w, y, z,
+    x, y,  z+d,   x,  y+h,  z+d,    x+w,  y+h,  z+d,    x+w, y,  z+d
+};
+
+GLfloat textureCoordinates[] = {
+	//Back
+	0, 0, 
+	0, 1,
+	1, 1,
+	1, 0,
 	//front
-	glVertex3f(x1, y1, z1+d1);
-	glVertex3f(x1, y1+h1, z1+d1);
-	glVertex3f(x1+w1, y1+h1, z1+d1);
-	glVertex3f(x1+w1, y1, z1+d1);
+	0, 0, 
+	0, 1,
+	1, 1,
+	1, 0,
 	//down
-	glVertex3f(x1, y1, z1+d1);
-	glVertex3f(x1+w1, y1, z1+d1);
-	glVertex3f(x1+w1, y1, z1);
-	glVertex3f(x1, y1, z1);
+	0, 0, 
+	0, 1,
+	1, 1,
+	1, 0,
 	//up
-	glVertex3f(x1, y1+h1, z1+d1);
-	glVertex3f(x1+w1, y1+h1, z1+d1);
-	glVertex3f(x1+w1, y1+h1, z1);
-	glVertex3f(x1, y1+h1, z1);
+	0, 0, 
+	0, 1,
+	1, 1,
+	1, 0,
 	//left
-	glVertex3f(x1, y1, z1+d1);
-	glVertex3f(x1, y1, z1);
-	glVertex3f(x1, y1+h1, z1);
-	glVertex3f(x1, y1+h1, z1+d1);
+	0, 0, 
+	0, 1,
+	1, 1,
+	1, 0,
 	//right
-	glVertex3f(x1+w1, y1, z1+d1);
-	glVertex3f(x1+w1, y1, z1);
-	glVertex3f(x1+w1, y1+h1, z1);
-	glVertex3f(x1+w1, y1+h1, z1+d1);
-	glEnd();
+	0, 0, 
+	0, 1,
+	1, 1,
+	1, 0,
+};
+
+glEnableClientState(GL_VERTEX_ARRAY);
+glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+glVertexPointer(3, GL_FLOAT, 0, vertices);
+glTexCoordPointer(2, GL_FLOAT, 0, textureCoordinates);
+glDrawArrays(GL_QUADS, 0, 24);
+glDisableClientState(GL_VERTEX_ARRAY);
+glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
 }
 
