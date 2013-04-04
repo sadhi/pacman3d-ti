@@ -53,39 +53,40 @@ void Block:: draw()
 	glEnable(GL_TEXTURE_2D);
 
 	glColor3f(red, green, blue);
-	glNormal3d(0, 0, 1);
-	glBegin(GL_QUADS);
-	//back
-	glTexCoord2f(0,0); glVertex3f(x, y, z);
-	glTexCoord2f(0,1); glVertex3f(x, y+h, z);
-	glTexCoord2f(1,1); glVertex3f(x+w, y+h, z);
-	glTexCoord2f(1,0); glVertex3f(x+w, y, z);
-	//front
-	glTexCoord2f(0,0); glVertex3f(x, y, z+d);
-	glTexCoord2f(0,1); glVertex3f(x, y+h, z+d);
-	glTexCoord2f(1,1); glVertex3f(x+w, y+h, z+d);
-	glTexCoord2f(1,0); glVertex3f(x+w, y, z+d);
-	//down
-	glTexCoord2f(0,0); glVertex3f(x, y, z+d);
-	glTexCoord2f(0,1); glVertex3f(x+w, y, z+d);
-	glTexCoord2f(1,1); glVertex3f(x+w, y, z);
-	glTexCoord2f(1,0); glVertex3f(x, y, z);
-	//up
-	glTexCoord2f(0,0); glVertex3f(x, y+h, z+d);
-	glTexCoord2f(0,1); glVertex3f(x+w, y+h, z+d);
-	glTexCoord2f(1,1); glVertex3f(x+w, y+h, z);
-	glTexCoord2f(1,0); glVertex3f(x, y+h, z);
-	//left
-	glTexCoord2f(0,0); glVertex3f(x, y, z+d);
-	glTexCoord2f(0,1); glVertex3f(x, y, z);
-	glTexCoord2f(1,1); glVertex3f(x, y+h, z);
-	glTexCoord2f(1,0); glVertex3f(x, y+h, z+d);
-	//right
-	glTexCoord2f(0,0); glVertex3f(x+w, y, z+d);
-	glTexCoord2f(0,1); glVertex3f(x+w, y, z);
-	glTexCoord2f(1,1); glVertex3f(x+w, y+h, z);
-	glTexCoord2f(1,0); glVertex3f(x+w, y+h, z+d);
-	glEnd();
+	//glNormal3d(0, 0, 1);
+	//glBegin(GL_QUADS);
+	////back
+	//glTexCoord2f(0,0); glVertex3f(x, y, z);
+	//glTexCoord2f(0,1); glVertex3f(x, y+h, z);
+	//glTexCoord2f(1,1); glVertex3f(x+w, y+h, z);
+	//glTexCoord2f(1,0); glVertex3f(x+w, y, z);
+	////front
+	//glTexCoord2f(0,0); glVertex3f(x, y, z+d);
+	//glTexCoord2f(0,1); glVertex3f(x, y+h, z+d);
+	//glTexCoord2f(1,1); glVertex3f(x+w, y+h, z+d);
+	//glTexCoord2f(1,0); glVertex3f(x+w, y, z+d);
+	////down
+	//glTexCoord2f(0,0); glVertex3f(x, y, z+d);
+	//glTexCoord2f(0,1); glVertex3f(x+w, y, z+d);
+	//glTexCoord2f(1,1); glVertex3f(x+w, y, z);
+	//glTexCoord2f(1,0); glVertex3f(x, y, z);
+	////up
+	//glTexCoord2f(0,0); glVertex3f(x, y+h, z+d);
+	//glTexCoord2f(0,1); glVertex3f(x+w, y+h, z+d);
+	//glTexCoord2f(1,1); glVertex3f(x+w, y+h, z);
+	//glTexCoord2f(1,0); glVertex3f(x, y+h, z);
+	////left
+	//glTexCoord2f(0,0); glVertex3f(x, y, z+d);
+	//glTexCoord2f(0,1); glVertex3f(x, y, z);
+	//glTexCoord2f(1,1); glVertex3f(x, y+h, z);
+	//glTexCoord2f(1,0); glVertex3f(x, y+h, z+d);
+	////right
+	//glTexCoord2f(0,0); glVertex3f(x+w, y, z+d);
+	//glTexCoord2f(0,1); glVertex3f(x+w, y, z);
+	//glTexCoord2f(1,1); glVertex3f(x+w, y+h, z);
+	//glTexCoord2f(1,0); glVertex3f(x+w, y+h, z+d);
+	//glEnd();
+	draw3DRectangle(x, y, z, w, h, d);
 
 	glDisable(GL_TEXTURE_2D);
 }

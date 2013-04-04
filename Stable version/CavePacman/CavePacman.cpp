@@ -9,6 +9,8 @@
 
 const int LEFT = 300, RIGHT = 301, UP = 302, DOWN = 303;
 
+
+
 CavePacman::CavePacman(void)
 {
 }
@@ -36,12 +38,7 @@ void CavePacman::init()
 		}
 	}
 
-	Json::Reader reader;
-	std::ifstream pFile("data/models/lol/models.json__", std::ios_base::in);
-	if(!reader.parse(pFile, models))
-	{
-		printf("Json Read Error: %s", reader.getFormatedErrorMessages().c_str());
-	}
+	loadWall();
 
 	//for(int z = 0; z < 10; z++)
 	//{
@@ -51,6 +48,11 @@ void CavePacman::init()
 	loadLevel();
 	loadOrbs();
 	loadWayPoints();
+}
+
+void CavePacman::loadWall()
+{
+	
 }
 
 void CavePacman::loadLevel()
@@ -142,12 +144,12 @@ void CavePacman::loadOrbs()
 	addDefaultOrb(16, 0);
 
 	//line 2
-	addDefaultOrb(0, 1);
+	addSuperOrb(0, 1);
 	addDefaultOrb(3, 1);
 	addDefaultOrb(7, 1);
 	addDefaultOrb(9, 1);
 	addDefaultOrb(13, 1);
-	addDefaultOrb(16, 1);
+	addSuperOrb(16, 1);
 
 	//line 3
 	addDefaultOrb(0, 2);
@@ -167,6 +169,170 @@ void CavePacman::loadOrbs()
 	addDefaultOrb(14, 2);
 	addDefaultOrb(15, 2);
 	addDefaultOrb(16, 2);
+
+	//line 4
+	addDefaultOrb(0, 3);
+	addDefaultOrb(3, 3);
+	addDefaultOrb(5, 3);
+	addDefaultOrb(11, 3);
+	addDefaultOrb(13, 3);
+	addDefaultOrb(16, 3);
+
+	//line 5
+	addDefaultOrb(0, 4);
+	addDefaultOrb(1, 4);
+	addDefaultOrb(2, 4);
+	addDefaultOrb(3, 4);
+	addDefaultOrb(5, 4);
+	addDefaultOrb(6, 4);
+	addDefaultOrb(7, 4);
+	addDefaultOrb(9, 4);
+	addDefaultOrb(10, 4);
+	addDefaultOrb(11, 4);
+	addDefaultOrb(13, 4);
+	addDefaultOrb(14, 4);
+	addDefaultOrb(15, 4);
+	addDefaultOrb(16, 4);
+
+	//line 6
+	addDefaultOrb(3, 5);
+	addDefaultOrb(7, 5);
+	addDefaultOrb(9, 5);
+	addDefaultOrb(13, 5);
+
+	//line 7
+	addDefaultOrb(3, 6);
+	addDefaultOrb(5, 6);
+	addDefaultOrb(6, 6);
+	addDefaultOrb(7, 6);
+	addDefaultOrb(8, 6);
+	addDefaultOrb(9, 6);
+	addDefaultOrb(10, 6);
+	addDefaultOrb(11, 6);
+	addDefaultOrb(13, 6);
+
+	//line 8
+	addDefaultOrb(3, 7);
+	addDefaultOrb(5, 7);
+	addDefaultOrb(11, 7);
+	addDefaultOrb(13, 7);
+
+	//line 9
+	addDefaultOrb(3, 8);
+	addDefaultOrb(4, 8);
+	addDefaultOrb(5, 8);
+	addDefaultOrb(11, 8);
+	addDefaultOrb(12, 8);
+	addDefaultOrb(13, 8);
+
+	//line 10
+	addDefaultOrb(3, 9);
+	addDefaultOrb(5, 9);
+	addDefaultOrb(6, 9);
+	addDefaultOrb(7, 9);
+	addDefaultOrb(8, 9);
+	addDefaultOrb(9, 9);
+	addDefaultOrb(10, 9);
+	addDefaultOrb(11, 9);
+	addDefaultOrb(13, 9);
+
+	//line 11
+	addDefaultOrb(3, 10);
+	addDefaultOrb(5, 10);
+	addDefaultOrb(11, 10);
+	addDefaultOrb(13, 10);
+
+	//line 12
+	addDefaultOrb(0, 11);
+	addDefaultOrb(1, 11);
+	addDefaultOrb(2, 11);
+	addDefaultOrb(3, 11);
+	addDefaultOrb(4, 11);
+	addDefaultOrb(5, 11);
+	addDefaultOrb(6, 11);
+	addDefaultOrb(7, 11);
+	addDefaultOrb(9, 11);
+	addDefaultOrb(10, 11);
+	addDefaultOrb(11, 11);
+	addDefaultOrb(12, 11);
+	addDefaultOrb(13, 11);
+	addDefaultOrb(14, 11);
+	addDefaultOrb(15, 11);
+	addDefaultOrb(16, 11);
+
+	//line 13
+	addDefaultOrb(0, 12);
+	addDefaultOrb(3, 12);
+	addDefaultOrb(7, 12);
+	addDefaultOrb(9, 12);
+	addDefaultOrb(13, 12);
+	addDefaultOrb(16, 12);
+
+	//line 14
+	addSuperOrb(0, 13);
+	addDefaultOrb(1, 13);
+	addDefaultOrb(3, 13);
+	addDefaultOrb(4, 13);
+	addDefaultOrb(5, 13);
+	addDefaultOrb(6, 13);
+	addDefaultOrb(7, 13);
+	addDefaultOrb(8, 13);
+	addDefaultOrb(9, 13);
+	addDefaultOrb(10, 13);
+	addDefaultOrb(11, 13);
+	addDefaultOrb(12, 13);
+	addDefaultOrb(13, 13);
+	addDefaultOrb(15, 13);
+	addSuperOrb(16, 13);
+
+	//line 15
+	addDefaultOrb(1, 14);
+	addDefaultOrb(3, 14);
+	addDefaultOrb(5, 14);
+	addDefaultOrb(11, 14);
+	addDefaultOrb(13, 14);
+	addDefaultOrb(15, 14);
+
+	//line 16
+	addDefaultOrb(0, 15);
+	addDefaultOrb(1, 15);
+	addDefaultOrb(2, 15);
+	addDefaultOrb(3, 15);
+	addDefaultOrb(5, 15);
+	addDefaultOrb(6, 15);
+	addDefaultOrb(7, 15);
+	addDefaultOrb(9, 15);
+	addDefaultOrb(10, 15);
+	addDefaultOrb(11, 15);
+	addDefaultOrb(13, 15);
+	addDefaultOrb(14, 15);
+	addDefaultOrb(15, 15);
+	addDefaultOrb(16, 15);
+
+	//line 17
+	addDefaultOrb(1, 16);
+	addDefaultOrb(7, 16);
+	addDefaultOrb(9, 16);
+	addDefaultOrb(16, 16);
+
+	//line 18
+	addDefaultOrb(0, 17);
+	addDefaultOrb(1, 17);
+	addDefaultOrb(2, 17);
+	addDefaultOrb(3, 17);
+	addDefaultOrb(4, 17);
+	addDefaultOrb(5, 17);
+	addDefaultOrb(6, 17);
+	addDefaultOrb(7, 17);
+	addDefaultOrb(8, 17);
+	addDefaultOrb(9, 17);
+	addDefaultOrb(10, 17);
+	addDefaultOrb(11, 17);
+	addDefaultOrb(12, 17);
+	addDefaultOrb(13, 17);
+	addDefaultOrb(14, 17);
+	addDefaultOrb(15, 17);
+	addDefaultOrb(16, 17);
 }
 
 
@@ -197,7 +363,7 @@ void CavePacman::loadWayPoints()
 	wayPoints.push_back(new WayPoint(30,40,true, true, true,false));
 	wayPoints.push_back(new WayPoint(50,40,true, false, false,true));
 	wayPoints.push_back(new WayPoint(70,40,false, true, true,false));
-	wayPoints.push_back(new WayPoint(90,40,false, true, true,false));
+	wayPoints.push_back(new WayPoint(90,40,false, true, false,true));
 	wayPoints.push_back(new WayPoint(110,40,true, false, true,false));
 	wayPoints.push_back(new WayPoint(130,40,true, true, false,true));
 	wayPoints.push_back(new WayPoint(160,40,true, false, true,false));
@@ -205,6 +371,7 @@ void CavePacman::loadWayPoints()
 	//line 7
 	wayPoints.push_back(new WayPoint(50,60,false, true, false,true));
 	wayPoints.push_back(new WayPoint(70,60,true, false, true,true));
+	wayPoints.push_back(new WayPoint(80,60,false, false, true,true));
 	wayPoints.push_back(new WayPoint(90,60,true, false, true,true));
 	wayPoints.push_back(new WayPoint(110,60,false, true, true,false));
 
@@ -302,12 +469,14 @@ void CavePacman::contextInit()
 	glEnable(GL_DEPTH_TEST);
 	glShadeModel(GL_SMOOTH);
 
-	Ghost* ghost = new Ghost(13, 11);
-	Ghost* ghost2 = new Ghost(13, 12);
-	Ghost* ghost3 = new Ghost(13, 13);
+	Ghost* ghost = new Ghost(8, 7, 1);
+	Ghost* ghost2 = new Ghost(8, 7, 2);
+	Ghost* ghost3 = new Ghost(8, 7, 3);
+	Ghost* ghost4 = new Ghost(8, 7, 4);
 	ghosts.push_back(ghost);
 	ghosts.push_back(ghost2);
 	ghosts.push_back(ghost3);
+	ghosts.push_back(ghost4);
 }
 
 gmtl::Vec4f CavePacman::collisionLinePlane(gmtl::Vec3f A, gmtl::Vec3f B, gmtl::Planef plane)
@@ -541,15 +710,15 @@ void CavePacman::updateGhosts()
 		int x2 = 0;
 		int z2 = 0;
 		float modX = fmodf(ghost->getX()+5, 10.0f);
-		std::cout << "X: " << ((int)(ghost->getX()+5)) << std::endl;
-		std::cout << "MODX: " << modX << std::endl;
+		//std::cout << "X: " << ((int)(ghost->getX()+5)) << std::endl;
+		//std::cout << "MODX: " << modX << std::endl;
 		float modZ = fmodf(ghost->getZ()+5, 10.0f);
-		std::cout << "Z: " << ((int)(ghost->getZ()+5)) << std::endl;
-		std::cout << "MODZ: " << modZ << std::endl;
+		//std::cout << "Z: " << ((int)(ghost->getZ()+5)) << std::endl;
+		//std::cout << "MODZ: " << modZ << std::endl;
 
 		if(modX >= 9.9f || modX <= 0.1f)
 		{
-			std::cout << "X: " << ((int)(ghost->getX()+5)) << std::endl;
+			//std::cout << "X: " << ((int)(ghost->getX()+5)) << std::endl;
 			if(modX >= 9.9f)
 			{
 				x2 = (int)((ghost->getX()+5)-modX+10.0f);
@@ -558,10 +727,10 @@ void CavePacman::updateGhosts()
 			{
 				x2 = (int)((ghost->getX()+5)-modX);
 			}
-			std::cout << "X2: " << x2 << std::endl;
+			//std::cout << "X2: " << x2 << std::endl;
 			if(modZ >= 9.9f || modZ <= 0.1f)
 			{
-				std::cout << "Z: " << ((int)(ghost->getZ()+5)) << std::endl;
+				//std::cout << "Z: " << ((int)(ghost->getZ()+5)) << std::endl;
 				if(modZ >= 9.9f)
 				{
 					z2 = (int)((ghost->getZ()+5)-modZ+10.0f);
@@ -570,7 +739,7 @@ void CavePacman::updateGhosts()
 				{
 					z2 = (int)((ghost->getZ()+5)-modZ);
 				}
-				std::cout << "Z2: " << z2 << std::endl;
+				//std::cout << "Z2: " << z2 << std::endl;
 				checkWayPoints = true;
 			}
 		}
@@ -583,9 +752,9 @@ void CavePacman::updateGhosts()
 			{
 				if(x2 == wayPoints[w]->getX() && z2 == wayPoints[w]->getZ())
 				{
-					std::cout << "Old Direction: " << ghost->getDirection() << std::endl;
+					//std::cout << "Old Direction: " << ghost->getDirection() << std::endl;
 					int newDirection = wayPoints[w]->getNewDirection(ghost->getDirection());
-					std::cout << "New Direction: " << newDirection << std::endl;
+					//std::cout << "New Direction: " << newDirection << std::endl;
 					ghost->setDirection(newDirection);
 				}
 			}
@@ -615,12 +784,12 @@ void CavePacman::draw()
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, texture->tid());
 
-    glEnable (GL_LIGHTING); //enable the lighting
-    glEnable (GL_LIGHT0); //enable LIGHT0, our Diffuse Light
+    glEnable (GL_LIGHTING);
+    glEnable (GL_LIGHT0);
 	GLfloat lightpos[] = {1.0f, 1.0f, 1.0f, 0.0f};
 	glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
     glEnable (GL_COLOR_MATERIAL);
-    glShadeModel (GL_SMOOTH); //set the shader to smooth shader
+    glShadeModel (GL_SMOOTH);
 
 	//Draw objects
 	for(int i = 0; i < coordinates.size(); i++)
@@ -714,42 +883,6 @@ void CavePacman:: draw3DRectangle(const float x1, const float y1, const float z1
 	glEnd();
 }
 
-void CavePacman:: drawTextured3DRectangle(const float x1, const float y1, const float z1, const float w1, const float h1, const float d1)
-{
-	glNormal3d(0, 0, 1);
-	glBegin(GL_QUADS);
-	//back
-	glTexCoord2f(0,0); glVertex3f(x1, y1, z1);
-	glTexCoord2f(0,1); glVertex3f(x1, y1+h1, z1);
-	glTexCoord2f(1,1); glVertex3f(x1+w1, y1+h1, z1);
-	glTexCoord2f(1,0); glVertex3f(x1+w1, y1, z1);
-	//front
-	glTexCoord2f(0,0); glVertex3f(x1, y1, z1+d1);
-	glTexCoord2f(0,1); glVertex3f(x1, y1+h1, z1+d1);
-	glTexCoord2f(1,1); glVertex3f(x1+w1, y1+h1, z1+d1);
-	glTexCoord2f(1,0); glVertex3f(x1+w1, y1, z1+d1);
-	//down
-	glTexCoord2f(0,0); glVertex3f(x1, y1, z1+d1);
-	glTexCoord2f(0,1); glVertex3f(x1+w1, y1, z1+d1);
-	glTexCoord2f(1,1); glVertex3f(x1+w1, y1, z1);
-	glTexCoord2f(1,0); glVertex3f(x1, y1, z1);
-	//up
-	glTexCoord2f(0,0); glVertex3f(x1, y1+h1, z1+d1);
-	glTexCoord2f(0,1); glVertex3f(x1+w1, y1+h1, z1+d1);
-	glTexCoord2f(1,1); glVertex3f(x1+w1, y1+h1, z1);
-	glTexCoord2f(1,0); glVertex3f(x1, y1+h1, z1);
-	//left
-	glTexCoord2f(0,0); glVertex3f(x1, y1, z1+d1);
-	glTexCoord2f(0,1); glVertex3f(x1, y1, z1);
-	glTexCoord2f(1,1); glVertex3f(x1, y1+h1, z1);
-	glTexCoord2f(1,0); glVertex3f(x1, y1+h1, z1+d1);
-	//right
-	glTexCoord2f(0,0); glVertex3f(x1+w1, y1, z1+d1);
-	glTexCoord2f(0,1); glVertex3f(x1+w1, y1, z1);
-	glTexCoord2f(1,1); glVertex3f(x1+w1, y1+h1, z1);
-	glTexCoord2f(1,0); glVertex3f(x1+w1, y1+h1, z1+d1);
-	glEnd();
-}
 void CavePacman:: draw3DRectangleWithoutTop(const float x1, const float y1, const float z1, const float w1, const float h1, const float d1)
 {
 	glNormal3d(0, 0, 1);
@@ -790,30 +923,3 @@ void CavePacman:: draw3DRectangleWithoutTop(const float x1, const float y1, cons
 	glEnd();
 }
 
-void CavePacman:: drawSphere(double r, int lats, int longs) 
-{
-	float M_PI = 3.14159265359f;
-      int i, j;
-      for(i = 0; i <= lats; i++) {
-            double lat0 = M_PI * (-0.5 + (double) (i - 1) / lats);
-           double z0  = sin(lat0);
-          double zr0 =  cos(lat0);
-    
-          double lat1 = M_PI * (-0.5 + (double) i / lats);
-           double z1 = sin(lat1);
-          double zr1 = cos(lat1);
-    
-          glBegin(GL_QUAD_STRIP);
-           for(j = 0; j <= longs; j++) {
-              double lng = 2 * M_PI * (double) (j - 1) / longs;
-              double x = cos(lng);
-               double y = sin(lng);
-    
-              glNormal3f(x * zr0, y * zr0, z0);
-               glVertex3f(x * zr0, y * zr0, z0);
-             glNormal3f(x * zr1, y * zr1, z1);
-              glVertex3f(x * zr1, y * zr1, z1);
-           }
-           glEnd();
-       }
-}

@@ -12,6 +12,8 @@ SuperOrb::SuperOrb(int x, int z):Orb(x, z)
 	this->d = 10.0f;
 
 	this->radius = 1.8f;
+
+	initSphere(radius, 16, 16);
 }
 
 void SuperOrb:: update()
@@ -23,6 +25,6 @@ void SuperOrb::draw()
 	glColor3f(1.0f, 1.0f, 0.0f);
 	glPushMatrix();
 	glTranslatef(x + 5.0f, 0.0f, z + 5.0f);
-	drawSphere(radius, 20, 20);
+	drawSphere();
 	glPopMatrix();
 }

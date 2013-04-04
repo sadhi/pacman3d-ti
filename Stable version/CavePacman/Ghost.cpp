@@ -12,7 +12,7 @@
 #include <gmtl/Math.h>
 
 
-Ghost::Ghost(int x, int z):Sprite(x, z)
+Ghost::Ghost(int x, int z, int ghostNr):Sprite(x, z)
 {
 	this->x = (x*10.0f)-5.0f;
 	this->y = -5.0f;
@@ -21,22 +21,16 @@ Ghost::Ghost(int x, int z):Sprite(x, z)
 	this->h = 10.0f;
 	this->d = 10.0f;
 
-	switch(rand()%7)
+	switch(ghostNr)
 	{
+		//Pink
+		case 1: red = 1.0f; green = 0.5f; blue = 0.5f; break;
+		//Light blue
+		case 2: red = 0.0f; green = 1.0f; blue = 0.5f; break;
+		//Orange
+		case 3: red = 1.0f; green = 0.5f; blue = 0.0f; break;
 		//Red
-		case 0: red = 1.0f; green = 0.0f; blue = 0.0f; break;
-		//Green
-		case 1: red = 0.0f; green = 1.0f; blue = 0.0f; break;
-		//Blue
-		case 2: red = 0.0f; green = 0.0f; blue = 1.0f; break;
-		//Yellow
-		case 3: red = 1.0f; green = 1.0f; blue = 0.0f; break;
-		//Cyan
-		case 4: red = 0.0f; green = 1.0f; blue = 1.0f; break;
-		//Magenta
-		case 5: red = 1.0f; green = 0.0f; blue = 1.0f; break;
-		//White
-		case 6: red = 1.0f; green = 1.0f; blue = 1.0f; break;
+		case 4: red = 1.0f; green = 0.0f; blue = 0.0f; break;
 	}
 
 	//Load model
@@ -118,9 +112,16 @@ void Ghost::update()
 	{
 		if(rotation > 90)
 		{
-			rotation -= 3;
+			if(rotation > 270)
+			{
+				rotation += 3;
+			}
+			else
+			{
+				rotation -= 3;
+			}
 		}
-		else if(rotation < 90)
+		else 
 		{
 			rotation += 3;
 		}
@@ -131,9 +132,16 @@ void Ghost::update()
 		{
 			rotation -= 3;
 		}
-		else if(rotation < 270)
+		else 
 		{
-			rotation += 3;
+			if(rotation > 90)
+			{
+				rotation += 3;
+			}
+			else
+			{
+				rotation -= 3;
+			}
 		}
 	}
 	else if(direction==UP && rotation!=180)
@@ -142,7 +150,7 @@ void Ghost::update()
 		{
 			rotation -= 3;
 		}
-		else if(rotation < 180)
+		else
 		{
 			rotation += 3;
 		}
@@ -157,7 +165,6 @@ void Ghost::update()
 		{
 			rotation -= 3;
 		}
-		rotation = 0;
 	}
 	if(rotation > 360)
 	{
