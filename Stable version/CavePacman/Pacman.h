@@ -10,6 +10,7 @@ public:
 	float getY()const{return y;}
 	float getZ()const{return z;}
 	float getRotation()const{return rotation;}
+	int getDirection()const{return direction;}
 	int getXGrid();
 	int getZGrid();
 	int determineXGridLeft(float amount);
@@ -19,6 +20,7 @@ public:
 	void setX(float x);
 	void setY(float y);
 	void setZ(float z);
+	void setDirection(int direction){this->direction = direction;}
 	void moveX(float amount);
 	void moveZ(float amount);
 	void rotate(float amount);

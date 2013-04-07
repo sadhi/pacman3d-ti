@@ -10,6 +10,8 @@ class WayPoint
 	int WayPoint:: getX()const{return x;}
 	int WayPoint:: getZ()const{return z;}
 	int getNewDirection(int currentDirection);
+	int getAmountOfChoices();
+	bool canGo(int direction);
 
 	private:
 	int x, z;

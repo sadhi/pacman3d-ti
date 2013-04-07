@@ -7,7 +7,7 @@
 #include <fstream>
 #include <iostream>
 
-const int LEFT = 300, RIGHT = 301, UP = 302, DOWN = 303;
+const int LEFT = 1, RIGHT = 2, UP = 3, DOWN = 4;
 
 
 
@@ -27,8 +27,13 @@ void CavePacman::init()
 	TextureLoadOptions* t = new TextureLoadOptions();
 	t->sampler = TextureLoadOptions::CLOSEST;
 	texture = CaveLib::loadTexture("Images/grid.jpg", t);
+	sounds[0].Load("Sounds/pacman_beginning.wav");
+	sounds[1].Load("Sounds/pacman_chomp.wav");
+	sounds[2].Load("Sounds/pacman_death.wav");
+	sounds[3].Load("Sounds/pacman_eatghost.wav");
+	sounds[4].Load("Sounds/jump.wav");
 
-	direction = 0;
+	direction = UP;
 	pacman = new Pacman(130.0f, 130.0f);
 	for(int x = 0; x < 17; x++)
 	{
@@ -48,6 +53,8 @@ void CavePacman::init()
 	loadLevel();
 	loadOrbs();
 	loadWayPoints();
+
+	sounds[0].Play();
 }
 
 void CavePacman::loadWall()
@@ -310,7 +317,7 @@ void CavePacman::loadOrbs()
 	addDefaultOrb(16, 15);
 
 	//line 17
-	addDefaultOrb(1, 16);
+	addDefaultOrb(0, 16);
 	addDefaultOrb(7, 16);
 	addDefaultOrb(9, 16);
 	addDefaultOrb(16, 16);
@@ -346,7 +353,7 @@ void CavePacman::loadWayPoints()
 	wayPoints.push_back(new WayPoint(70,0,false, true, true,false));
 	wayPoints.push_back(new WayPoint(90,0,false, true, false,true));
 	wayPoints.push_back(new WayPoint(130,0,false, true, true,true));
-	wayPoints.push_back(new WayPoint(160,0,false, true, false,true));
+	wayPoints.push_back(new WayPoint(160,0,false, true, true,false));
 
 	//line 3
 	wayPoints.push_back(new WayPoint(0,20,true, true, false,true));
@@ -358,7 +365,7 @@ void CavePacman::loadWayPoints()
 	wayPoints.push_back(new WayPoint(130,20,true, true, true,true));
 	wayPoints.push_back(new WayPoint(160,20,true, true, true,false));
 
-	//line 0
+	//line 5
 	wayPoints.push_back(new WayPoint(0,40,true, false, false,true));
 	wayPoints.push_back(new WayPoint(30,40,true, true, true,false));
 	wayPoints.push_back(new WayPoint(50,40,true, false, false,true));
@@ -590,32 +597,60 @@ void CavePacman::checkInput()
 	}
 
 	//For Testing, keyboard events
-	//Check key events every 30 frames
+	//Check key events every 5 frames
 	if(frames%5==0)
 	{
+		int currentDirection = pacman->getDirection();
 		//Check W
 		if(GetAsyncKeyState(87)!=0)
 		{
 			//std::cout << "UP" << std::endl;
-			direction = UP;
+			//direction = UP;
+			//Go forward
+			//Direction is up so keep current direction
+			direction = currentDirection;
 		}
 		//Check A
 		else if(GetAsyncKeyState(65)!=0)
 		{
 			//std::cout << "LEFT" << std::endl;
-			direction = LEFT;
+			//direction = LEFT;
+			//Turn LEFT
+			switch(currentDirection)
+			{
+				case LEFT: direction = DOWN; break;
+				case RIGHT: direction = UP; break;
+				case UP: direction = LEFT; break;
+				case DOWN: direction = RIGHT; break;
+			}
 		}
 		//Check D
 		else if(GetAsyncKeyState(68)!=0)
 		{
 			//std::cout << "RIGHT" << std::endl;
-			direction = RIGHT;
+			//direction = RIGHT;
+			//Turn Right
+			switch(currentDirection)
+			{
+				case LEFT: direction = UP; break;
+				case RIGHT: direction = DOWN; break;
+				case UP: direction = RIGHT; break;
+				case DOWN: direction = LEFT; break;
+			}
 		}
 		//Check S
 		else if(GetAsyncKeyState(83)!=0)
 		{
 			//std::cout << "DOWN" << std::endl;
-			direction = DOWN;
+			//direction = DOWN;
+			//Turn Back
+			switch(currentDirection)
+			{
+				case LEFT: direction = RIGHT; break;
+				case RIGHT: direction = LEFT; break;
+				case UP: direction = DOWN; break;
+				case DOWN: direction = UP; break;
+			}
 		}
 		else
 		{
@@ -626,77 +661,149 @@ void CavePacman::checkInput()
 	if(GetAsyncKeyState(74)!=0)
 	{
 		pacman->jump();
+		sounds[4].Play();
 	}
 
-	//Check K
-	if(GetAsyncKeyState(75)!=0)
-	{
-		pacman->rotate(-5.0f);
-	}
-	//Check L
-	else if(GetAsyncKeyState(76)!=0)
-	{
-		pacman->rotate(5.0f);
-	}
+	////Check K
+	//if(GetAsyncKeyState(75)!=0)
+	//{
+	//	pacman->rotate(-5.0f);
+	//}
+	////Check L
+	//else if(GetAsyncKeyState(76)!=0)
+	//{
+	//	pacman->rotate(5.0f);
+	//}
 }
 
 void CavePacman::updateMovement()
 {
-	int x = pacman->getXGrid();
-	int z = pacman->getZGrid();
-	int xGrid = x;
-	int zGrid = z;
-	switch(direction)
+	//True, when user has to make choose a other direction than forward
+	bool freeze = false;
+
+	bool checkWayPoints = false;
+	int x2 = 0;
+	int z2 = 0;
+	float modX = fmodf(pacman->getX(), 10.0f);
+	float modZ = fmodf(pacman->getZ(), 10.0f);
+	std::cout << "X: " << modX << std::endl;
+	std::cout << "Z: " <<  modZ << std::endl;
+	if(modX >= 9.9f || modX <= 0.1f)
 	{
-		case LEFT: xGrid = pacman->determineXGridLeft(-0.2f); break;
-		case RIGHT: xGrid = pacman->determineXGridRight(0.2f); break;
-		case UP: zGrid = pacman->determineZGridUp(-0.2f); break;
-		case DOWN: zGrid = pacman->determineZGridDown(0.2f); break;
-	}
-	if(xGrid >= 0 && xGrid < 17 && zGrid >= 0 && zGrid < 18)
-	{
-		if(grid[xGrid][zGrid]==false)
+		if(modX >= 9.9f)
 		{
-			switch(direction)
-			{
-				case LEFT: pacman->moveX(-0.2f); break;
-				case RIGHT: pacman->moveX(0.2f); break;
-				case UP: pacman->moveZ(-0.2f); break;
-				case DOWN: pacman->moveZ(0.2f); break;
-			}
+			x2 = (int)(pacman->getX()-modX+10.0f);
 		}
 		else
 		{
-			//Check object
-			Sprite* sprite = sprites[xGrid][zGrid];
-			if(sprite->getType()!=sprite->BLOCK)
+			x2 = (int)(pacman->getX()-modX);
+		}
+		if(modZ >= 9.9f || modZ <= 0.1f)
+		{
+			if(modZ >= 9.9f)
 			{
-				switch(direction)
+				z2 = (int)(pacman->getZ()-modZ+10.0f);
+			}
+			else
+			{
+				z2 = (int)(pacman->getZ()-modZ);
+			}
+			checkWayPoints = true;
+		}
+	}
+	if(checkWayPoints==true)
+	{
+		std::cout << "MOVE: " << x2 << ", " << z2 << std::endl;
+		pacman->setX(x2);
+		pacman->setZ(z2);
+
+		for(int w = 0; w < wayPoints.size(); w++)
+		{
+			if(x2 == wayPoints[w]->getX() && z2 == wayPoints[w]->getZ())
+			{
+				if(wayPoints[w]->canGo(direction)==true)
+				{
+					pacman->setDirection(direction);
+				}
+				else if(wayPoints[w]->getAmountOfChoices()==2)
+				{
+					//Automatically make choice
+					direction = wayPoints[w]->getNewDirection(pacman->getDirection());
+					pacman->setDirection(direction);
+				}
+				else
+				{
+					std::cout << "FREEZE: " << x2 << ", " << z2 << std::endl;
+					freeze = true;
+				}
+				std::cout << "CHANGE DIRECTION: " << direction << std::endl;
+
+				break;
+			}
+		}
+	}
+	if(freeze==false)
+	{
+		//General movement
+		int currentDirection = pacman->getDirection();
+		std::cout << "CURRENT DIRECTION: " << currentDirection << std::endl;
+		int x = pacman->getXGrid();
+		int z = pacman->getZGrid();
+		int xGrid = x;
+		int zGrid = z;
+		//switch(currentDirection)
+		//{
+		//	case LEFT: xGrid = pacman->determineXGridLeft(-0.2f); break;
+		//	case RIGHT: xGrid = pacman->determineXGridRight(0.2f); break;
+		//	case UP: zGrid = pacman->determineZGridUp(-0.2f); break;
+		//	case DOWN: zGrid = pacman->determineZGridDown(0.2f); break;
+		//}
+		if(xGrid >= 0 && xGrid < 17 && zGrid >= 0 && zGrid < 18)
+		{
+			if(grid[xGrid][zGrid]==false)
+			{
+				switch(currentDirection)
 				{
 					case LEFT: pacman->moveX(-0.2f); break;
 					case RIGHT: pacman->moveX(0.2f); break;
 					case UP: pacman->moveZ(-0.2f); break;
 					case DOWN: pacman->moveZ(0.2f); break;
 				}
-				//Check collision
-				if(((Orb*)sprite)->intersects(pacman->getX()+2.5f, pacman->getZ())+2.5f)
+			}
+			else
+			{
+				//Check object
+				Sprite* sprite = sprites[xGrid][zGrid];
+				if(sprite->getType()!=sprite->BLOCK)
 				{
-					clearLocation(xGrid, zGrid);
+					switch(currentDirection)
+					{
+						case LEFT: pacman->moveX(-0.2f); break;
+						case RIGHT: pacman->moveX(0.2f); break;
+						case UP: pacman->moveZ(-0.2f); break;
+						case DOWN: pacman->moveZ(0.2f); break;
+					}
+					//Check collision
+					if(((Orb*)sprite)->intersects(pacman->getX()+3.33f, pacman->getZ()+3.33f))
+					{
+						clearLocation(xGrid, zGrid);
+						sounds[1].Play();
+					}
 				}
 			}
 		}
-	}
-	else
-	{
-		direction = 0;
-	}
-	if(pacman->getX() < 0.0f)
-	{
-		pacman->setX(0.0f);
-	}
-	if(pacman->getZ() < 0.0f)
-	{
-		pacman->setZ(0.0f);
+		else
+		{
+			//direction = 0;
+		}
+		if(pacman->getX() < 0.0f)
+		{
+			pacman->setX(0.0f);
+		}
+		if(pacman->getZ() < 0.0f)
+		{
+			pacman->setZ(0.0f);
+		}
 	}
 }
 
@@ -710,11 +817,7 @@ void CavePacman::updateGhosts()
 		int x2 = 0;
 		int z2 = 0;
 		float modX = fmodf(ghost->getX()+5, 10.0f);
-		//std::cout << "X: " << ((int)(ghost->getX()+5)) << std::endl;
-		//std::cout << "MODX: " << modX << std::endl;
 		float modZ = fmodf(ghost->getZ()+5, 10.0f);
-		//std::cout << "Z: " << ((int)(ghost->getZ()+5)) << std::endl;
-		//std::cout << "MODZ: " << modZ << std::endl;
 
 		if(modX >= 9.9f || modX <= 0.1f)
 		{
@@ -756,6 +859,7 @@ void CavePacman::updateGhosts()
 					int newDirection = wayPoints[w]->getNewDirection(ghost->getDirection());
 					//std::cout << "New Direction: " << newDirection << std::endl;
 					ghost->setDirection(newDirection);
+					break;
 				}
 			}
 		}
@@ -811,7 +915,7 @@ void CavePacman::draw()
 	int xGrid = pacman->getXGrid();
 	int zGrid = pacman->getZGrid();
 	glColor3f(1.0f, 0.0f, 0.0f);
-	draw3DRectangle(-5.0f+(xGrid*10.0f), -5.0f, -5.0f+(zGrid*10.0f), 10.0f, 0.1f, 10.0f);
+	draw3DRectangle(-5.0f+(xGrid*10.0f), -5.0f, -5.0f+(zGrid*10.0f), 10.0f, 0.3f, 10.0f);
 	glColor3f(0.0f, 1.0f, 0.0f);
 	if(xGrid+1 >= 0 && xGrid+1 < 17 && zGrid >= 0 && zGrid < 18 && grid[xGrid+1][zGrid]==false)
 	{

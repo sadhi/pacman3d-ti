@@ -1,5 +1,5 @@
 #include "Pacman.h"
-const int LEFT = 300, RIGHT = 301, UP = 302, DOWN = 303;
+const int LEFT = 1, RIGHT = 2, UP = 3, DOWN = 4;
 
 Pacman::Pacman(float x, float z)
 {
@@ -113,6 +113,74 @@ void Pacman::update()
 			y = 0.0f;
 			jumpSpeed = 0.0f;
 		}
+	}
+	std::cout << "Direction: " << direction << std::endl;
+	//Rotation
+	if(direction==RIGHT && rotation!=90)
+	{
+		if(rotation > 90)
+		{
+			if(rotation > 270)
+			{
+				rotation += 3;
+			}
+			else
+			{
+				rotation -= 3;
+			}
+		}
+		else 
+		{
+			rotation += 3;
+		}
+	}
+	else if(direction==LEFT && rotation!=270)
+	{
+		if(rotation > 270)
+		{
+			rotation -= 3;
+		}
+		else 
+		{
+			if(rotation > 90)
+			{
+				rotation += 3;
+			}
+			else
+			{
+				rotation -= 3;
+			}
+		}
+	}
+	else if(direction==DOWN && rotation!=180)
+	{
+		if(rotation > 180)
+		{
+			rotation -= 3;
+		}
+		else
+		{
+			rotation += 3;
+		}
+	}
+	else if(direction==UP && rotation!=0)
+	{
+		if(rotation > 180)
+		{
+			rotation += 3;
+		}
+		else
+		{
+			rotation -= 3;
+		}
+	}
+	if(rotation > 360)
+	{
+		rotation -= 360;
+	}
+	else if(rotation < 0)
+	{
+		rotation += 360;
 	}
 }
 
