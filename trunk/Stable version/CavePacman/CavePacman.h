@@ -20,6 +20,8 @@
 #include "Pacman.h"
 #include "Ghost.h"
 #include "WayPoint.h"
+#include "Wave.h"
+#include <tchar.h>
 
 class CavePacman :
 	public vrj::opengl::App
@@ -73,4 +75,5 @@ private:
 	std::vector<Ghost*> ghosts;
 	std::vector<WayPoint*> wayPoints;
 	Json::Value models;
+	CWave sounds[5];
 };

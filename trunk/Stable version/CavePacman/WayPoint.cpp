@@ -27,4 +27,38 @@ int WayPoint::getNewDirection(int currentDirection)
 	return direction;
 }
 
+int WayPoint::getAmountOfChoices()
+{
+	int choices = 0;
+	if(left==true){choices++;}
+	if(right==true){choices++;}
+	if(up==true){choices++;}
+	if(down==true){choices++;}
+	return choices;
+}
+
+bool WayPoint::canGo(int direction)
+{
+	if(direction==LEFT && left==true)
+	{
+		return true;
+	}
+	else if(direction==RIGHT && right==true)
+	{
+		return true;
+	}
+	else if(direction==UP && up==true)
+	{
+		return true;
+	}
+	else if(direction==DOWN && down==true)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 
