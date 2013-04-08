@@ -742,6 +742,27 @@ void CavePacman::updateMovement()
 			}
 		}
 	}
+	else if(pacman->isRotating()==false)
+	{
+		//Always be able to turn back
+		int currentDirection = pacman->getDirection();
+		if(currentDirection==LEFT && direction==RIGHT)
+		{
+			pacman->setDirection(RIGHT);
+		}
+		else if(currentDirection==RIGHT && direction==LEFT)
+		{
+			pacman->setDirection(LEFT);
+		}
+		else if(currentDirection==UP && direction==DOWN)
+		{
+			pacman->setDirection(DOWN);
+		}
+		else if(currentDirection==DOWN && direction==UP)
+		{
+			pacman->setDirection(UP);
+		}
+	}
 	if(freeze==false)
 	{
 		//General movement

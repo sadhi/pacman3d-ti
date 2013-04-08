@@ -82,6 +82,30 @@ void Pacman::rotate(float amount)
 	}
 }
 
+bool Pacman::isRotating()
+{
+	if(direction==RIGHT && rotation==90)
+	{
+		return false;
+	}
+	else if(direction==LEFT && rotation==270)
+	{
+		return false;
+	}
+	else if(direction==DOWN && rotation==180)
+	{
+		return false;
+	}
+	else if(direction==UP && rotation==0)
+	{
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
+
 void Pacman::jump()
 {
 	if(jumpSpeed==0.0f && y==0.0f)

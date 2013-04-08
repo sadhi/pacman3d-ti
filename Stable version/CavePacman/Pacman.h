@@ -24,6 +24,7 @@ public:
 	void moveX(float amount);
 	void moveZ(float amount);
 	void rotate(float amount);
+	bool isRotating();
 	void jump();
 	void update();
 	void draw();
