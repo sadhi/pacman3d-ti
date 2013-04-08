@@ -50,6 +50,8 @@ public:
 	void updateMovement();
 	void updateGhosts();
 	void clearLocation(int x, int z);
+	void checkWand();
+	void checkKeyboard();
 	
 
 private:
@@ -76,4 +78,5 @@ private:
 	std::vector<WayPoint*> wayPoints;
 	Json::Value models;
 	CWave sounds[5];
+	bool useWand;
 };

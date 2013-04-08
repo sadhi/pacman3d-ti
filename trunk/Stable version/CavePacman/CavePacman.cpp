@@ -22,6 +22,8 @@ CavePacman::~CavePacman(void)
 
 void CavePacman::init()
 {
+	useWand = true;
+
 	wand.init("VJWand");
 	keyboard.init("VJKeyboard");
 	TextureLoadOptions* t = new TextureLoadOptions();
@@ -509,31 +511,6 @@ void CavePacman::preFrame()
 	updateMovement();
 	pacman->update();
 	updateGhosts();
-	//Update blocks
-	//updateTargets();
-
-	//Check block hit
-	//for(int i = 0; i < blocks.size(); i++)
-	//{
-	//	if(currentWallNr==0 && blocks[i].contains(wallPointLeft[0], wallPointLeft[1], wallPointLeft[2]))
-	//	{
-	//		std::cout << "HIT LEFT" << std::endl;
-	//		blocks.erase(blocks.begin()+i);
-	//		break;
-	//	}
-	//	else if(currentWallNr==1 && blocks[i].contains(wallPointForward[0], wallPointForward[1], wallPointForward[2]))
-	//	{
-	//		std::cout << "HIT FORWARD" << std::endl;
-	//		blocks.erase(blocks.begin()+i);
-	//		break;
-	//	}
-	//	else if(currentWallNr==2 && blocks[i].contains(wallPointRight[0], wallPointRight[1], wallPointRight[2]))
-	//	{
-	//		std::cout << "HIT RIGHT" << std::endl;
-	//		blocks.erase(blocks.begin()+i);
-	//		break;
-	//	}
-	//}
 	
 	frames++;
 	if(frames==10000)
@@ -544,11 +521,23 @@ void CavePacman::preFrame()
 
 void CavePacman::checkInput()
 {
+	if(useWand==true)
+	{
+		checkWand();
+	}
+	else
+	{
+		checkKeyboard();
+	}
+}
+
+void CavePacman::checkWand()
+{
 	wand->updateData();
 	gmtl::Matrix44f wandMatrix = wand->getData();
 	wandOrigin = wandMatrix * gmtl::Vec4f(0,0,0,1);
 	wandForward = wandMatrix * gmtl::Vec4f(0,0,1,1);
-
+	int currentDirection = pacman->getDirection();
 	//Wall forward
 	gmtl::Planef planeForward(gmtl::Vec3f(0,0,-1), -5);
 	wallPointForward = collisionLinePlane(gmtl::Vec3f(wandOrigin[0], wandOrigin[1], wandOrigin[2]),
@@ -556,7 +545,31 @@ void CavePacman::checkInput()
 	if(wallPointForward[0] >= -5.0f && wallPointForward[0] <= 5.0f)
 	{
 		currentWallNr = 1;
-		//std::cout << "WALL FORWARD" << std::endl;
+		if(wallPointForward[1] > 5.0f)
+		{
+			std::cout << "WALL UP" << std::endl;
+			pacman->jump();
+			sounds[4].Play();
+		}
+		else if(wallPointForward[1] < -5.0f)
+		{
+			std::cout << "WALL DOWN" << std::endl;
+			//Turn Back
+			switch(currentDirection)
+			{
+				case LEFT: direction = RIGHT; break;
+				case RIGHT: direction = LEFT; break;
+				case UP: direction = DOWN; break;
+				case DOWN: direction = UP; break;
+			}
+		}
+		else
+		{
+			std::cout << "WALL FORWARD" << std::endl;
+			//Go forward
+			//Direction is up so keep current direction
+			direction = currentDirection;
+		}
 	}
 	else
 	{
@@ -569,7 +582,15 @@ void CavePacman::checkInput()
 			if(wallPointLeft[2] >= -5.0f && wallPointLeft[2] <= 5.0f && wallPointLeft[0] < 0.0f)
 			{
 				currentWallNr = 0;
-				//std::cout << "WALL LEFT" << std::endl;
+				std::cout << "WALL LEFT" << std::endl;
+				//Turn LEFT
+				switch(currentDirection)
+				{
+					case LEFT: direction = DOWN; break;
+					case RIGHT: direction = UP; break;
+					case UP: direction = LEFT; break;
+					case DOWN: direction = RIGHT; break;
+				}
 			}
 			else
 			{
@@ -586,7 +607,15 @@ void CavePacman::checkInput()
 			if(wallPointRight[2] >= -5.0f && wallPointRight[2] <= 5.0f && wallPointRight[0] > 0.0f)
 			{
 				currentWallNr = 2;
-				//std::cout << "WALL RIGHT" << std::endl;
+				std::cout << "WALL RIGHT" << std::endl;
+				//Turn Right
+				switch(currentDirection)
+				{
+					case LEFT: direction = UP; break;
+					case RIGHT: direction = DOWN; break;
+					case UP: direction = RIGHT; break;
+					case DOWN: direction = LEFT; break;
+				}
 			}
 			else
 			{
@@ -595,8 +624,11 @@ void CavePacman::checkInput()
 			}
 		}
 	}
+}
 
-	//For Testing, keyboard events
+void CavePacman::checkKeyboard()
+{
+		//For Testing, keyboard events
 	//Check key events every 5 frames
 	if(frames%5==0)
 	{
@@ -663,17 +695,6 @@ void CavePacman::checkInput()
 		pacman->jump();
 		sounds[4].Play();
 	}
-
-	////Check K
-	//if(GetAsyncKeyState(75)!=0)
-	//{
-	//	pacman->rotate(-5.0f);
-	//}
-	////Check L
-	//else if(GetAsyncKeyState(76)!=0)
-	//{
-	//	pacman->rotate(5.0f);
-	//}
 }
 
 void CavePacman::updateMovement()
@@ -686,8 +707,8 @@ void CavePacman::updateMovement()
 	int z2 = 0;
 	float modX = fmodf(pacman->getX(), 10.0f);
 	float modZ = fmodf(pacman->getZ(), 10.0f);
-	std::cout << "X: " << modX << std::endl;
-	std::cout << "Z: " <<  modZ << std::endl;
+	//std::cout << "X: " << modX << std::endl;
+	//std::cout << "Z: " <<  modZ << std::endl;
 	if(modX >= 9.9f || modX <= 0.1f)
 	{
 		if(modX >= 9.9f)
@@ -713,7 +734,7 @@ void CavePacman::updateMovement()
 	}
 	if(checkWayPoints==true)
 	{
-		std::cout << "MOVE: " << x2 << ", " << z2 << std::endl;
+		//std::cout << "MOVE: " << x2 << ", " << z2 << std::endl;
 		pacman->setX(x2);
 		pacman->setZ(z2);
 
@@ -733,10 +754,10 @@ void CavePacman::updateMovement()
 				}
 				else
 				{
-					std::cout << "FREEZE: " << x2 << ", " << z2 << std::endl;
+					//std::cout << "FREEZE: " << x2 << ", " << z2 << std::endl;
 					freeze = true;
 				}
-				std::cout << "CHANGE DIRECTION: " << direction << std::endl;
+				//std::cout << "CHANGE DIRECTION: " << direction << std::endl;
 
 				break;
 			}
@@ -767,18 +788,11 @@ void CavePacman::updateMovement()
 	{
 		//General movement
 		int currentDirection = pacman->getDirection();
-		std::cout << "CURRENT DIRECTION: " << currentDirection << std::endl;
+		//std::cout << "CURRENT DIRECTION: " << currentDirection << std::endl;
 		int x = pacman->getXGrid();
 		int z = pacman->getZGrid();
 		int xGrid = x;
 		int zGrid = z;
-		//switch(currentDirection)
-		//{
-		//	case LEFT: xGrid = pacman->determineXGridLeft(-0.2f); break;
-		//	case RIGHT: xGrid = pacman->determineXGridRight(0.2f); break;
-		//	case UP: zGrid = pacman->determineZGridUp(-0.2f); break;
-		//	case DOWN: zGrid = pacman->determineZGridDown(0.2f); break;
-		//}
 		if(xGrid >= 0 && xGrid < 17 && zGrid >= 0 && zGrid < 18)
 		{
 			if(grid[xGrid][zGrid]==false)
@@ -969,6 +983,14 @@ void CavePacman::draw()
 
 	//Move to old location
 	glPopMatrix();
+
+	glColor3f(1.0f, 0.0f, 0.0f);
+	switch(currentWallNr)
+	{
+		case 0: draw3DRectangle(wallPointLeft[0]-0.05f, wallPointLeft[1]-0.05f, wallPointLeft[2]-0.05f, 0.1f, 0.1f, 0.1f); break;
+		case 1: draw3DRectangle(wallPointForward[0]-0.05f, wallPointForward[1]-0.05f, wallPointForward[2]-0.05f, 0.1f, 0.1f, 0.1f); break;
+		case 2: draw3DRectangle(wallPointRight[0]-0.05f, wallPointRight[1]-0.05f, wallPointRight[2]-0.05f, 0.1f, 0.1f, 0.1f); break;
+	}
 }
 
 void CavePacman:: draw3DRectangle(const float x1, const float y1, const float z1, const float w1, const float h1, const float d1)
