@@ -21,6 +21,7 @@ public:
 	void Ghost:: setDirection(float direction){this->direction = direction;}
 	virtual void update();
 	virtual void draw();
+	void setrot(int rot);
 
 private:
 	cModel* model;

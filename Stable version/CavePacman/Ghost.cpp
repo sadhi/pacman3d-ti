@@ -49,7 +49,6 @@ Ghost::Ghost(int x, int z, int ghostNr):Sprite(x, z)
 	}
 	texture = CaveLib::loadTexture(texturePath);
 
-
 	direction = UP;
 	rotation = 180;
 }
@@ -234,4 +233,9 @@ void Ghost::draw()
 
 	//model->draw(shader);
 	glPopMatrix();
+}
+
+void Ghost::setrot(int rot)
+{
+	rotation = rot;
 }
