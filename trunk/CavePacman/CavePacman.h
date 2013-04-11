@@ -78,6 +78,8 @@ private:
 	Orb* orbs[24][24];
 	std::vector<Coordinate*> orbCoordinates;
 
+	//std::vector<Coordinate*> coordinates;
+
 	Pacman* pacman;
 	std::vector<Ghost*> ghosts;
 	Json::Value models;
