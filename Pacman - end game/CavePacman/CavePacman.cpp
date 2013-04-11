@@ -8,7 +8,9 @@
 #include <iostream>
 
 const int LEFT = 1, RIGHT = 2, UP = 3, DOWN = 4;
-
+float deathcam=0;
+float countdown=0;
+int lives=3, points=0;
 
 
 CavePacman::CavePacman(void)
@@ -22,8 +24,8 @@ CavePacman::~CavePacman(void)
 
 void CavePacman::init()
 {
+	countdown=0;
 	useWand = false;
-	orbCount = 0;
 
 	wand.init("VJWand");
 	keyboard.init("VJKeyboard");
@@ -35,6 +37,7 @@ void CavePacman::init()
 	sounds[2].Load("Sounds/pacman_death.wav");
 	sounds[3].Load("Sounds/pacman_eatghost.wav");
 	sounds[4].Load("Sounds/jump.wav");
+	sounds[5].Load("Sounds/pacman_eatfruit.wav");
 
 	direction = UP;
 	pacman = new Pacman(130.0f, 130.0f);
@@ -43,12 +46,8 @@ void CavePacman::init()
 		for(int z = 0; z < 18; z++)
 		{
 			grid[x][z] = false;
-			sprites[x][z] = NULL;
 		}
 	}
-
-	
-
 
 	loadWall();
 
@@ -57,6 +56,10 @@ void CavePacman::init()
 	//	addBlock(0, z);
 	//	addBlock(2, z);
 	//}
+
+	dead=false; poweredup=false;
+	Powerupstart = clock();
+
 	loadLevel();
 	loadOrbs();
 	loadWayPoints();
@@ -132,9 +135,9 @@ void CavePacman::loadLevel()
 		int x = coord[i] - 5;
 		int z = coord[i+1];
 		addBlock(x, z);
-		//std::cout << "Block: " << x << ", " << z << std::endl;
+		std::cout << "Block: " << x << ", " << z << std::endl;
 	}
-	//std::cout << "Finished" << std::endl;
+	std::cout << "Finished" << std::endl;
 }
 
 void CavePacman::loadOrbs()
@@ -349,6 +352,7 @@ void CavePacman::loadOrbs()
 	addDefaultOrb(16, 17);
 }
 
+
 void CavePacman::loadWayPoints()
 {
 	//from top left to bottom right
@@ -451,9 +455,6 @@ void CavePacman::addDefaultOrb(int x, int z)
 	grid[x][z] = true;
 	sprites[x][z] = new DefaultOrb(x, z);
 	coordinates.push_back(new Coordinate(x, z));
-
-	orbCount++;
-	std::cout << orbCount << std::endl;
 }
 
 void CavePacman::addSuperOrb(int x, int z)
@@ -461,8 +462,6 @@ void CavePacman::addSuperOrb(int x, int z)
 	grid[x][z] = true;
 	sprites[x][z] = new SuperOrb(x, z);
 	coordinates.push_back(new Coordinate(x, z));
-
-	orbCount++;
 }
 
 void CavePacman::clearLocation(int x, int z)
@@ -480,45 +479,6 @@ void CavePacman::clearLocation(int x, int z)
 	}
 	coordinates.erase(coordinates.begin()+index);
 }
-
-
-/*
-*	Checks the array for default orbs.
-*	If there are no default orbs left in the array, you won.
-*/
-void CavePacman::endLevel()
-{
-	for(int ix = 0; ix <= 16; ix++)
-	{
-		for(int iz = 0; iz <= 17; iz++)
-		{
-			std::cout << ix << "  " << iz << std::endl;
-			Sprite* sprite = sprites[ix][iz];
-			if(sprite != NULL && sprite->getType()== sprite->DEFAULTORB) 
-			{
-				//blabla
-				std::cout << "sprite at (" << ix << ", " << iz << ") is not null" << std::endl;; 	
-				return;
-			}
-			else if(sprite != NULL && sprite->getType()== sprite->DEFAULTORB)
-			{
-				std::cout << "sprite at (" << ix << ", " << iz << ") is Type: " << sprite->getType() << std::endl;
-			}
-		}
-
-	}
-	std::cout << "You won!" << std::endl;
-
-}
-
-void CavePacman::checkCount()
-{
-	if(orbCount <= 0)
-	{
-		std::cout << "You won!" << std::endl;
-	}
-}
-
 
 void CavePacman::contextInit()
 {
@@ -554,12 +514,58 @@ gmtl::Vec4f CavePacman::collisionLinePlane(gmtl::Vec3f A, gmtl::Vec3f B, gmtl::P
 
 void CavePacman::preFrame()
 {
+	std::cout << "score: "<< std::endl;
+	std::cout << points << std::endl;
+	 
 	//Sleep(100);
+//	checkInput();
+//	updateMovement();
+//	pacman->update();
+//	updateGhosts();
+	if(countdown<=30){
+		countdown+=0.15;
+	}
+	
+	if(!dead && countdown>30){
 	checkInput();
 	updateMovement();
 	pacman->update();
 	updateGhosts();
+	}
 	
+		for(int i = 0; i < ghosts.size(); i++)
+	{
+		float DeltaX=abs(pacman->getX()-ghosts[i]->getX()-5);
+		float DeltaY=abs(pacman->getY()-0);
+		float DeltaZ=abs(pacman->getZ()-ghosts[i]->getZ()-5);
+
+		if(DeltaX<3.5 && DeltaZ<3.5 && DeltaY<=0){
+			if(poweredup){
+				sounds[3].Play();
+				points+=400;
+				ghosts[i]->setX((8*10.0f)-5.0f);
+				ghosts[i]->setZ((7*10.0f)-5.0f);
+				ghosts[i]->setDirection(UP);
+				ghosts[i]->setrot(180);
+			}else{
+				if(!dead){
+				sounds[2].Play();}
+			dead=true;
+			}
+		}
+	}
+		/*
+				for(int i = 0; i < superorbs.size(); i++)
+		{
+			float DeltaX=abs(pacman->getX()-superorbs[i]->getX()-5);
+			float DeltaZ=abs(pacman->getZ()-superorbs[i]->getZ()-5);
+			if(DeltaX<3.5 && DeltaZ<3.5)
+			{
+				poweredup=true;
+				Powerupstart = clock();
+			}
+		} */
+
 	frames++;
 	if(frames==10000)
 	{
@@ -595,13 +601,13 @@ void CavePacman::checkWand()
 		currentWallNr = 1;
 		if(wallPointForward[1] > 5.0f)
 		{
-			//std::cout << "WALL UP" << std::endl;
+			std::cout << "WALL UP" << std::endl;
 			pacman->jump();
 			sounds[4].Play();
 		}
 		else if(wallPointForward[1] < -5.0f)
 		{
-			//std::cout << "WALL DOWN" << std::endl;
+			std::cout << "WALL DOWN" << std::endl;
 			//Turn Back
 			switch(currentDirection)
 			{
@@ -613,7 +619,7 @@ void CavePacman::checkWand()
 		}
 		else
 		{
-			//std::cout << "WALL FORWARD" << std::endl;
+			std::cout << "WALL FORWARD" << std::endl;
 			//Go forward
 			//Direction is up so keep current direction
 			direction = currentDirection;
@@ -630,7 +636,7 @@ void CavePacman::checkWand()
 			if(wallPointLeft[2] >= -5.0f && wallPointLeft[2] <= 5.0f && wallPointLeft[0] < 0.0f)
 			{
 				currentWallNr = 0;
-				//std::cout << "WALL LEFT" << std::endl;
+				std::cout << "WALL LEFT" << std::endl;
 				//Turn LEFT
 				switch(currentDirection)
 				{
@@ -655,7 +661,7 @@ void CavePacman::checkWand()
 			if(wallPointRight[2] >= -5.0f && wallPointRight[2] <= 5.0f && wallPointRight[0] > 0.0f)
 			{
 				currentWallNr = 2;
-			//	std::cout << "WALL RIGHT" << std::endl;
+				std::cout << "WALL RIGHT" << std::endl;
 				//Turn Right
 				switch(currentDirection)
 				{
@@ -869,12 +875,18 @@ void CavePacman::updateMovement()
 					//Check collision
 					if(((Orb*)sprite)->intersects(pacman->getX()+3.33f, pacman->getZ()+3.33f))
 					{
-						orbCount--;
-						std::cout << orbCount << std::endl;
+						if(sprite->getType()==sprite->SUPERORB){
+							poweredup=true;
+							points+=50;
+							sounds[5].Play();
+							Powerupstart = clock();
+							//bla
+						}else{
+							sounds[1].Play();
+							points+=10;
+						}
 						clearLocation(xGrid, zGrid);
-						//endLevel();			//not used atm, checking count is more cpu-friendly
-						checkCount();
-						sounds[1].Play();
+						
 					}
 				}
 			}
@@ -961,19 +973,35 @@ void CavePacman::bufferPreDraw()
 
 void CavePacman::draw()
 {
+	glPushMatrix();
+
+	cntdown();
+	if(dead){
+		//blo
+		deathcam+=0.1;
+		glRotatef(min(deathcam/10,45),1,0,0);
+		glTranslatef(0,min(deathcam/10,10)/-1,min(deathcam/10,10)/-1);
+		glRotatef(deathcam,0,1,0);
+		if(deathcam>360){
+			restart();
+		}
+
+	//	glColorMask(GL_TRUE,GL_FALSE,GL_FALSE,GL_FALSE);
+	}//else{
+	//	glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
+	//	}
+
 	glEnable (GL_DEPTH_TEST);
-    
 
 	//Move environment
 	glPushMatrix();
 	glRotatef(pacman->getRotation(), 0.0f, 1.0f, 0.0f);
 	glTranslatef(-pacman->getX(), -pacman->getY(), -pacman->getZ());
-	
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, texture->tid());
+	glBindTexture(GL_TEXTURE_2D, texture->tid()); //muur texture
 
     glEnable (GL_LIGHTING);
     glEnable (GL_LIGHT0);
@@ -981,6 +1009,17 @@ void CavePacman::draw()
 	glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
     glEnable (GL_COLOR_MATERIAL);
     glShadeModel (GL_SMOOTH);
+
+	if(poweredup){
+		//checkpowerupduration
+		clock_t current = clock();
+		clock_t clockTicksPowerup = current - Powerupstart;
+		double timeInSeconds = clockTicksPowerup / (double) CLOCKS_PER_SEC;
+			if(timeInSeconds>10)
+			{
+				poweredup=false;
+			}
+		}
 
 	//Draw objects
 	for(int i = 0; i < coordinates.size(); i++)
@@ -1042,6 +1081,87 @@ void CavePacman::draw()
 		case 0: draw3DRectangle(wallPointLeft[0]-0.05f, wallPointLeft[1]-0.05f, wallPointLeft[2]-0.05f, 0.1f, 0.1f, 0.1f); break;
 		case 1: draw3DRectangle(wallPointForward[0]-0.05f, wallPointForward[1]-0.05f, wallPointForward[2]-0.05f, 0.1f, 0.1f, 0.1f); break;
 		case 2: draw3DRectangle(wallPointRight[0]-0.05f, wallPointRight[1]-0.05f, wallPointRight[2]-0.05f, 0.1f, 0.1f, 0.1f); break;
+	}
+	glPopMatrix();
+
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0.0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), 0.0, -1.0, 10.0);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	glDisable(GL_CULL_FACE);
+
+	glClear(GL_DEPTH_BUFFER_BIT);
+	draw2DHUD();
+
+	// Making sure we can render 3d again
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix(); 
+}
+
+void CavePacman:: drawPowerTime(int time)
+{
+	//10 start stop 270
+	//block size
+	int blockamount = 10 - time;
+	glColor3f(1.0f, 1.0f, 0.0);
+
+		for(int i = 0; i < blockamount; i++)
+		{
+			glTranslatef(25,0,0);
+	glBegin(GL_QUADS); 
+    glVertex2f(10, 80);
+    glVertex2f(35, 80);
+    glVertex2f(35, 100);
+    glVertex2f(10, 100);
+    glEnd(); 
+		
+	}
+}
+
+void CavePacman:: draw2DPacman()
+{
+	glColor3f(1.0f, 1.0f, 0.0);
+	
+	glBegin(GL_TRIANGLE_STRIP);
+		glVertex2f(60.0, 20.0);
+		glVertex2f(40.0, 40.0);
+		glVertex2f(40.0, 10.0);
+		glVertex2f(20.0, 20.0);
+		glVertex2f(40.0, 40.0);
+		glVertex2f(20.0, 20.0);
+		glVertex2f(10.0, 40.0);
+		glVertex2f(40.0, 40.0);
+		glVertex2f(20.0, 60.0);
+		glVertex2f(40.0, 70.0);
+		glVertex2f(40.0, 40.0);
+		glVertex2f(40.0, 70.0);
+		glVertex2f(60.0, 60.0);
+	glEnd();
+}
+
+void CavePacman:: draw2DHUD()
+{
+	
+	for(int i = 0; i < lives; i++)
+	{	glPushMatrix();
+		glTranslatef(i*100,0,0);
+		draw2DPacman();
+		glPopMatrix();
+	}
+
+	clock_t current = clock();
+	clock_t clockTicksPowerup = current - Powerupstart;
+	double SecondsInPowerup = clockTicksPowerup / (double) CLOCKS_PER_SEC;
+	
+	if(poweredup){
+	glPushMatrix();
+	drawPowerTime((int) SecondsInPowerup);
+	glPopMatrix();
 	}
 }
 
@@ -1120,5 +1240,62 @@ void CavePacman:: draw3DRectangleWithoutTop(const float x1, const float y1, cons
 	glVertex3f(x1+w1, y1+h1, z1);
 	glVertex3f(x1+w1, y1+h1, z1+d1);
 	glEnd();
+}
+
+void CavePacman::restart()
+{
+	lives--;
+	if(lives<0)
+	{lives=3;
+	points=0;
+	coordinates.clear();
+	loadLevel();
+	loadOrbs();
+	sounds[0].Play();}
+
+	deathcam=0;
+	for(int i = 0; i < ghosts.size(); i++)
+	{
+		ghosts[i]->setX((8*10.0f)-5.0f);
+		ghosts[i]->setZ((7*10.0f)-5.0f);
+		ghosts[i]->setDirection(UP);
+		ghosts[i]->setrot(180);
+		dead=false;
+		pacman->setX(130.0f);
+		pacman->setZ(130.0f);
+		pacman->setrot(0);
+		pacman->setdir(UP);
+		countdown=0;
+	}
+}
+
+void CavePacman::cntdown()
+{
+	
+	if(countdown>=30)
+	{
+		glColorMask(true,true,true,true);
+	}
+	else if(countdown>=25)
+	{
+		glColorMask(true,false,true,true);
+	}
+	else if(countdown>=20)
+	{
+		glColorMask(false,false,true,true);
+	}
+	else if(countdown>=15)
+	{
+		glColorMask(false,true,false,true);
+	}
+	else if(countdown>=10)
+	{
+		glColorMask(true,false,false,true);
+	}
+	else if(countdown>=5)
+	{
+		glColorMask(false,false,false,true);
+	}
+	
 }
 

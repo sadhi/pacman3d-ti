@@ -22,6 +22,13 @@
 #include "WayPoint.h"
 #include "Wave.h"
 #include <tchar.h>
+#include <time.h>
+
+#include <fstream>
+#include <iostream>
+#include <cstdio>
+#include <ctime>
+#include <math.h>
 
 class CavePacman :
 	public vrj::opengl::App
@@ -52,11 +59,11 @@ public:
 	void clearLocation(int x, int z);
 	void checkWand();
 	void checkKeyboard();
-	void endLevel();
-	void checkCount();
-
-
-	
+	void restart();
+	void cntdown();
+	void draw2DPacman();
+	void draw2DHUD();
+	void drawPowerTime(int time);
 
 private:
 	gadget::PositionInterface wand;
@@ -80,8 +87,11 @@ private:
 	Pacman* pacman;
 	std::vector<Ghost*> ghosts;
 	std::vector<WayPoint*> wayPoints;
-	Json::Value models;
-	CWave sounds[5];
+//	Json::Value models;
+	CWave sounds[6];
 	bool useWand;
-	int orbCount;
+
+	bool dead, poweredup;
+	clock_t Powerupstart;
+	float countdown;
 };
