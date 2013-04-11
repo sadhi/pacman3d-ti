@@ -3,7 +3,6 @@ const int LEFT = 1, RIGHT = 2, UP = 3, DOWN = 4;
 
 Pacman::Pacman(float x, float z)
 {
-	
 	this->x = x;
 	this->y = 0.0f;
 	this->z = z;
@@ -13,6 +12,16 @@ Pacman::Pacman(float x, float z)
 	this->jumpSpeed = 0.0f;
 	this->rotation = 0.0f;
 	this->direction = UP;
+}
+
+void Pacman::setrot(int rot)
+{
+	rotation=rot;
+}
+
+void Pacman::setdir(const int dir)
+{
+	direction=dir;
 }
 
 int Pacman::getXGrid()

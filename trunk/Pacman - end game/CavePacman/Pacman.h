@@ -28,13 +28,14 @@ public:
 	void jump();
 	void update();
 	void draw();
+	void Pacman::setrot(int rot);
+	void Pacman::setdir(const int dir);
 
 private:
 	float x, y, z, w, h, d;
 	float jumpSpeed;
 	float rotation;
 	int direction;
-	int lives;
 };
 #endif
 
